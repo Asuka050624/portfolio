@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>反馈中心 - 宠物健康管理系统</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/init.js"></script>
+    <script src="js/feedback.js"></script>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo">反馈中心</div>
+        <div class="back-btn" id="backBtn">
+            <img src="images/back.png" alt="返回">
+        </div>
+    </nav>
+
+    <!-- 反馈表单 -->
+    <div class="feedback-container">
+        <form id="feedbackForm">
+            <div class="form-group">
+                <label for="feedbackType">反馈类型</label>
+                <select id="feedbackType">
+                    <option value="">请选择反馈类型</option>
+                    <option value="suggestion">建议</option>
+                    <option value="bug">问题反馈</option>
+                    <option value="compliment">表扬</option>
+                    <option value="other">其他</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="feedbackContent">反馈内容</label>
+                <textarea id="feedbackContent" placeholder="请详细描述您的反馈内容..." rows="6"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="contactInfo">联系方式 (选填)</label>
+                <input type="text" id="contactInfo" placeholder="请输入您的邮箱或电话">
+            </div>
+            <button type="submit" class="feedback-btn">提交反馈</button>
+        </form>
+    </div>
+
+    <!-- 我的反馈列表 -->
+    <div class="my-feedbacks">
+        <h3>我的反馈</h3>
+        <div class="feedback-list" id="feedbackList">
+            <!-- 反馈记录将动态添加 -->
+        </div>
+    </div>
+
+    <!-- 成功提示弹窗 -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>提示</h3>
+                <button class="close-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <p>反馈提交成功！</p>
+                <button class="confirm-btn">确定</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

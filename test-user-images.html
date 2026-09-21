@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片测试页面</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .test-container {
+            padding: 20px;
+            text-align: center;
+        }
+        .image-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .image-item {
+            text-align: center;
+        }
+        .image-wrapper {
+            margin-bottom: 10px;
+        }
+        .image-name {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">图片测试</div>
+        <div class="back-btn" onclick="window.location.href='user_center.html'">
+            <img src="images/back.png" alt="返回">
+        </div>
+    </nav>
+    
+    <div class="test-container">
+        <h2>用户中心图片测试</h2>
+        
+        <div class="image-grid">
+            <!-- 用户头像 -->
+            <div class="image-item">
+                <div class="image-wrapper">
+                    <img src="images/user_avatar.png" alt="用户头像" style="width: 120px; height: 120px; border-radius: 50%;">
+                </div>
+                <div class="image-name">user_avatar.png</div>
+            </div>
+            
+            <!-- 订单图标 -->
+            <div class="image-item">
+                <div class="image-wrapper">
+                    <img src="images/orders.png" alt="订单图标" style="width: 60px; height: 60px;">
+                </div>
+                <div class="image-name">orders.png</div>
+            </div>
+            
+            <!-- 设置图标 -->
+            <div class="image-item">
+                <div class="image-wrapper">
+                    <img src="images/settings.png" alt="设置图标" style="width: 60px; height: 60px;">
+                </div>
+                <div class="image-name">settings.png</div>
+            </div>
+            
+            <!-- 箭头图标 -->
+            <div class="image-item">
+                <div class="image-wrapper">
+                    <img src="images/arrow.png" alt="箭头图标" style="width: 32px; height: 32px;">
+                </div>
+                <div class="image-name">arrow.png</div>
+            </div>
+            
+            <!-- 返回图标 -->
+            <div class="image-item">
+                <div class="image-wrapper">
+                    <img src="images/back.png" alt="返回图标" style="width: 32px; height: 32px;">
+                </div>
+                <div class="image-name">back.png</div>
+            </div>
+            
+            <!-- 预约图标 -->
+            <div class="image-item">
+                <div class="image-wrapper">
+                    <img src="images/reservation.png" alt="预约图标" style="width: 60px; height: 60px;">
+                </div>
+                <div class="image-name">reservation.png</div>
+            </div>
+            
+            <!-- 反馈图标 -->
+            <div class="image-item">
+                <div class="image-wrapper">
+                    <img src="images/feedback.png" alt="反馈图标" style="width: 60px; height: 60px;">
+                </div>
+                <div class="image-name">feedback.png</div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <p>点击上方的返回按钮可以回到用户中心页面查看实际效果</p>
+        </div>
+    </div>
+</body>
+</html>

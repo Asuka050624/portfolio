@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>预约功能测试 - 宠物健康管理系统</title>
+    <script src="js/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+        }
+        .test-case {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-case h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 3px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .failed {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-btn {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .test-btn:hover {
+            background-color: #45a049;
+        }
+        .test-output {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 3px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <h1>宠物健康管理系统 - 预约功能测试</h1>
+    
+    <div class="test-case">
+        <h3>测试用例1：表单验证测试 - 必填字段</h3>
+        <p>测试预约表单中必填字段的验证功能</p>
+        <button class="test-btn" onclick="testRequiredFields()">执行测试</button>
+        <div class="test-output" id="output1"></div>
+        <div class="result" id="result1"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>测试用例2：预约数据提交测试</h3>
+        <p>测试完整的预约数据提交功能</p>
+        <div class="form-group">
+            <label for="testPetName">宠物名称：</label>
+            <input type="text" id="testPetName" value="小白">
+        </div>
+        <div class="form-group">
+            <label for="testPetType">宠物类型：</label>
+            <select id="testPetType">
+                <option value="dog">狗</option>
+                <option value="cat">猫</option>
+                <option value="other">其他</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="testSymptoms">症状描述：</label>
+            <textarea id="testSymptoms">食欲不振，精神状态差</textarea>
+        </div>
+        <div class="form-group">
+            <label for="testContactPhone">联系电话：</label>
+            <input type="text" id="testContactPhone" value="13800138000">
+        </div>
+        <button class="test-btn" onclick="testSubmitReservation()">执行测试</button>
+        <div class="test-output" id="output2"></div>
+        <div class="result" id="result2"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>测试用例3：电话号码格式验证</h3>
+        <p>测试联系电话格式验证功能</p>
+        <button class="test-btn" onclick="testPhoneValidation()">执行测试</button>
+        <div class="test-output" id="output3"></div>
+        <div class="result" id="result3"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>测试用例4：未登录状态下的预约测试</h3>
+        <p>测试在未登录状态下尝试预约时的行为</p>
+        <button class="test-btn" onclick="testUnauthorizedReservation()">执行测试</button>
+        <div class="test-output" id="output4"></div>
+        <div class="result" id="result4"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>测试用例5：预约数据存储测试</h3>
+        <p>测试预约数据是否正确存储在localStorage中</p>
+        <button class="test-btn" onclick="testReservationStorage()">执行测试</button>
+        <div class="test-output" id="output5"></div>
+        <div class="result" id="result5"></div>
+    </div>
+    
+    <script>
+        // 模拟表单验证函数
+        function validateReservationForm(formData) {
+            const errors = [];
+            
+            // 空数据验证
+            if (!formData.petName || formData.petName.trim() === '') {
+                errors.push('请输入宠物名称');
+            }
+            
+            if (!formData.petType) {
+                errors.push('请选择宠物类型');
+            }
+            
+            // 如果选择了'其他'宠物类型，必须填写具体的宠物类型
+            if (formData.petType === 'other' && (!formData.otherPetType || formData.otherPetType.trim() === '')) {
+                errors.push('请输入具体的宠物类型');
+            }
+            
+            if (!formData.symptoms || formData.symptoms.trim() === '') {
+                errors.push('请描述宠物症状或就诊需求');
+            }
+            
+            if (!formData.doctor) {
+                errors.push('请选择预约医生');
+            }
+            
+            if (!formData.date) {
+                errors.push('请选择预约日期');
+            }
+            
+            if (!formData.time) {
+                errors.push('请选择预约时间');
+            }
+            
+            if (!formData.contactName || formData.contactName.trim() === '') {
+                errors.push('请输入联系人姓名');
+            }
+            
+            // 电话号码格式验证
+            if (formData.contactPhone) {
+                const phoneRegex = /^1[3-9]\d{9}$/;
+                if (!phoneRegex.test(formData.contactPhone)) {
+                    errors.push('请输入正确的手机号码');
+                }
+            }
+            
+            return {
+                isValid: errors.length === 0,
+                errors: errors
+            };
+        }
+        
+        // 模拟预约提交函数
+        function submitReservation(formData) {
+            // 检查用户登录状态
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || !user.isLogin) {
+                return { success: false, message: '请先登录', requiresLogin: true };
+            }
+            
+            // 验证表单
+            const validationResult = validateReservationForm(formData);
+            if (!validationResult.isValid) {
+                return { success: false, message: validationResult.errors.join('; '), errors: validationResult.errors };
+            }
+            
+            // 生成预约ID
+            const reservationId = 'RES' + Date.now();
+            
+            // 构建完整的预约信息
+            const reservationInfo = {
+                id: reservationId,
+                username: user.username || '用户',
+                petName: formData.petName,
+                petType: formData.petType,
+                otherPetType: formData.otherPetType,
+                symptoms: formData.symptoms,
+                doctor: formData.doctor || '1',
+                doctorName: formData.doctorName || '张医生 - 宠物内科',
+                date: formData.date || new Date().toISOString().split('T')[0],
+                time: formData.time || '10:00',
+                contactName: formData.contactName || user.username,
+                contactPhone: formData.contactPhone,
+                status: 'pending', // 待处理状态
+                createTime: new Date().toISOString()
+            };
+            
+            // 获取现有预约列表
+            let reservations = [];
+            try {
+                const existingReservations = localStorage.getItem('reservations');
+                if (existingReservations) {
+                    reservations = JSON.parse(existingReservations);
+                }
+            } catch (e) {
+                console.error('解析预约数据失败:', e);
+            }
+            
+            // 添加新预约
+            reservations.push(reservationInfo);
+            
+            // 保存回localStorage
+            localStorage.setItem('reservations', JSON.stringify(reservations));
+            
+            return { success: true, message: '预约提交成功！', reservationId: reservationId };
+        }
+        
+        // 模拟用户登录状态
+        function mockUserLogin() {
+            const mockUser = {
+                username: '测试用户',
+                isLogin: true,
+                timestamp: new Date().getTime()
+            };
+            localStorage.setItem('user', JSON.stringify(mockUser));
+            return mockUser;
+        }
+        
+        // 清除用户登录状态
+        function clearUserLogin() {
+            localStorage.removeItem('user');
+        }
+        
+        // 测试用例1：表单验证测试 - 必填字段
+        function testRequiredFields() {
+            const output = document.getElementById('output1');
+            const result = document.getElementById('result1');
+            
+            output.textContent = '测试中...\n';
+            
+            // 测试空表单
+            const emptyForm = {};
+            const emptyValidation = validateReservationForm(emptyForm);
+            output.textContent += '空表单测试结果:\n';
+            output.textContent += `- 验证通过: ${emptyValidation.isValid}\n`;
+            output.textContent += `- 错误信息: ${emptyValidation.errors.join('; ')}\n\n`;
+            
+            // 测试缺少部分字段
+            const partialForm = {
+                petName: '小白',
+                // 缺少petType
+                symptoms: '食欲不振'
+                // 缺少其他必填字段
+            };
+            const partialValidation = validateReservationForm(partialForm);
+            output.textContent += '部分字段测试结果:\n';
+            output.textContent += `- 验证通过: ${partialValidation.isValid}\n`;
+            output.textContent += `- 错误信息: ${partialValidation.errors.join('; ')}\n\n`;
+            
+            // 测试其他类型选择但未填写具体类型
+            const otherTypeForm = {
+                petName: '小灰',
+                petType: 'other',
+                // 缺少otherPetType
+                symptoms: '看起来没精神',
+                doctor: '1',
+                date: '2025-12-31',
+                time: '14:00',
+                contactName: '李先生',
+                contactPhone: '13800138000'
+            };
+            const otherTypeValidation = validateReservationForm(otherTypeForm);
+            output.textContent += '其他宠物类型测试结果:\n';
+            output.textContent += `- 验证通过: ${otherTypeValidation.isValid}\n`;
+            output.textContent += `- 错误信息: ${otherTypeValidation.errors.join('; ')}\n\n`;
+            
+            // 验证所有测试是否按预期失败
+            if (!emptyValidation.isValid && !partialValidation.isValid && !otherTypeValidation.isValid) {
+                result.className = 'result success';
+                result.textContent = '测试通过！所有必填字段验证正常工作。';
+            } else {
+                result.className = 'result failed';
+                result.textContent = '测试失败！某些验证未按预期工作。';
+            }
+        }
+        
+        // 测试用例2：预约数据提交测试
+        function testSubmitReservation() {
+            const output = document.getElementById('output2');
+            const result = document.getElementById('result2');
+            
+            output.textContent = '测试中...\n';
+            
+            // 确保用户已登录
+            mockUserLogin();
+            output.textContent += '用户已模拟登录\n\n';
+            
+            // 获取表单数据
+            const formData = {
+                petName: document.getElementById('testPetName').value,
+                petType: document.getElementById('testPetType').value,
+                symptoms: document.getElementById('testSymptoms').value,
+                doctor: '1',
+                doctorName: '张医生 - 宠物内科',
+                date: new Date().toISOString().split('T')[0],
+                time: '10:00',
+                contactName: '测试用户',
+                contactPhone: document.getElementById('testContactPhone').value
+            };
+            
+            output.textContent += '提交的表单数据:\n';
+            output.textContent += JSON.stringify(formData, null, 2) + '\n\n';
+            
+            // 提交预约
+            const submitResult = submitReservation(formData);
+            
+            output.textContent += '提交结果:\n';
+            output.textContent += `- 成功: ${submitResult.success}\n`;
+            output.textContent += `- 消息: ${submitResult.message}\n`;
+            if (submitResult.reservationId) {
+                output.textContent += `- 预约ID: ${submitResult.reservationId}\n`;
+            }
+            
+            if (submitResult.success) {
+                result.className = 'result success';
+                result.textContent = '测试通过！预约提交成功。';
+            } else {
+                result.className = 'result failed';
+                result.textContent = '测试失败！预约提交失败。';
+            }
+        }
+        
+        // 测试用例3：电话号码格式验证
+        function testPhoneValidation() {
+            const output = document.getElementById('output3');
+            const result = document.getElementById('result3');
+            
+            output.textContent = '测试中...\n';
+            
+            // 测试不同的电话号码格式
+            const phoneTestCases = [
+                { phone: '13800138000', expected: true, description: '正确格式' },
+                { phone: '1380013800', expected: false, description: '位数不足' },
+                { phone: '23800138000', expected: false, description: '第一位不是1' },
+                { phone: '12800138000', expected: false, description: '第二位不是3-9' },
+                { phone: '13800138000a', expected: false, description: '包含非数字字符' },
+                { phone: '138 0013 8000', expected: false, description: '包含空格' }
+            ];
+            
+            let allPassed = true;
+            
+            for (const testCase of phoneTestCases) {
+                // 构建测试表单数据
+                const formData = {
+                    petName: '小白',
+                    petType: 'dog',
+                    symptoms: '测试',
+                    doctor: '1',
+                    date: '2025-12-31',
+                    time: '10:00',
+                    contactName: '测试用户',
+                    contactPhone: testCase.phone
+                };
+                
+                const validation = validateReservationForm(formData);
+                const actualResult = validation.isValid;
+                const testPassed = actualResult === testCase.expected;
+                
+                output.textContent += `${testCase.description}: ${testCase.phone}\n`;
+                output.textContent += `- 预期结果: ${testCase.expected ? '通过' : '失败'}\n`;
+                output.textContent += `- 实际结果: ${actualResult ? '通过' : '失败'}\n`;
+                output.textContent += `- 测试${testPassed ? '通过' : '失败'}\n\n`;
+                
+                if (!testPassed) {
+                    allPassed = false;
+                }
+            }
+            
+            if (allPassed) {
+                result.className = 'result success';
+                result.textContent = '测试通过！电话号码格式验证正常工作。';
+            } else {
+                result.className = 'result failed';
+                result.textContent = '测试失败！电话号码格式验证未按预期工作。';
+            }
+        }
+        
+        // 测试用例4：未登录状态下的预约测试
+        function testUnauthorizedReservation() {
+            const output = document.getElementById('output4');
+            const result = document.getElementById('result4');
+            
+            output.textContent = '测试中...\n';
+            
+            // 确保用户未登录
+            clearUserLogin();
+            output.textContent += '已清除用户登录状态\n\n';
+            
+            // 构建测试表单数据
+            const formData = {
+                petName: '小白',
+                petType: 'dog',
+                symptoms: '食欲不振',
+                doctor: '1',
+                date: '2025-12-31',
+                time: '10:00',
+                contactName: '测试用户',
+                contactPhone: '13800138000'
+            };
+            
+            // 尝试提交预约
+            const submitResult = submitReservation(formData);
+            
+            output.textContent += '提交结果:\n';
+            output.textContent += `- 成功: ${submitResult.success}\n`;
+            output.textContent += `- 消息: ${submitResult.message}\n`;
+            output.textContent += `- 需要登录: ${submitResult.requiresLogin || false}\n`;
+            
+            if (!submitResult.success && submitResult.requiresLogin) {
+                result.className = 'result success';
+                result.textContent = '测试通过！未登录状态下正确阻止了预约。';
+            } else {
+                result.className = 'result failed';
+                result.textContent = '测试失败！未正确处理未登录状态。';
+            }
+        }
+        
+        // 测试用例5：预约数据存储测试
+        function testReservationStorage() {
+            const output = document.getElementById('output5');
+            const result = document.getElementById('result5');
+            
+            output.textContent = '测试中...\n';
+            
+            // 确保用户已登录
+            mockUserLogin();
+            output.textContent += '用户已模拟登录\n\n';
+            
+            // 保存原始预约数据以便恢复
+            const originalReservations = localStorage.getItem('reservations');
+            
+            // 清除现有预约数据以进行干净测试
+            localStorage.removeItem('reservations');
+            output.textContent += '已清除现有预约数据\n\n';
+            
+            // 构建测试表单数据
+            const formData = {
+                petName: '测试宠物',
+                petType: 'dog',
+                symptoms: '测试预约存储功能',
+                doctor: '1',
+                date: '2025-12-31',
+                time: '10:00',
+                contactName: '测试用户',
+                contactPhone: '13800138000'
+            };
+            
+            // 提交预约
+            const submitResult = submitReservation(formData);
+            
+            if (submitResult.success) {
+                output.textContent += '预约提交成功，检查存储...\n\n';
+                
+                // 从localStorage获取预约数据
+                const storedReservations = localStorage.getItem('reservations');
+                
+                if (storedReservations) {
+                    try {
+                        const reservations = JSON.parse(storedReservations);
+                        output.textContent += `存储的预约数量: ${reservations.length}\n\n`;
+                        output.textContent += '最近的预约详情:\n';
+                        output.textContent += JSON.stringify(reservations[reservations.length - 1], null, 2);
+                        
+                        // 验证是否包含刚提交的预约
+                        const containsNewReservation = reservations.some(res => 
+                            res.petName === formData.petName && 
+                            res.symptoms === formData.symptoms
+                        );
+                        
+                        if (containsNewReservation) {
+                            result.className = 'result success';
+                            result.textContent = '测试通过！预约数据正确存储。';
+                        } else {
+                            result.className = 'result failed';
+                            result.textContent = '测试失败！存储的数据与提交的数据不匹配。';
+                        }
+                    } catch (e) {
+                        result.className = 'result failed';
+                        result.textContent = '测试失败！无法解析存储的预约数据。';
+                        output.textContent += `错误: ${e.message}\n`;
+                    }
+                } else {
+                    result.className = 'result failed';
+                    result.textContent = '测试失败！localStorage中未找到预约数据。';
+                }
+            } else {
+                result.className = 'result failed';
+                result.textContent = '测试失败！预约提交失败，无法测试存储功能。';
+                output.textContent += `提交错误: ${submitResult.message}\n`;
+            }
+            
+            // 恢复原始预约数据
+            if (originalReservations) {
+                localStorage.setItem('reservations', originalReservations);
+            }
+        }
+    </script>
+</body>
+</html>

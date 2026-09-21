@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>宠物春季常见疾病预防指南 - 宠物健康管理系统</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* 修复顶部空白问题 */
+        body {
+            padding-top: 0;
+        }
+        
+        /* 导航栏样式 */
+        .navbar {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #4CAF50;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            flex: 1;
+        }
+        
+        .back-btn {
+            margin-right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .back-btn img {
+            width: 24px;
+            height: 24px;
+            display: block;
+        }
+        
+        /* 资讯详情容器 */
+        .news-detail-container {
+            padding: 15px;
+            background-color: white;
+        }
+        
+        .news-detail-container h1 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .news-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .detail-image {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        
+        .detail-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+        
+        .detail-content {
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .detail-content p {
+            margin-bottom: 15px;
+        }
+        
+        .detail-content h4 {
+            margin: 20px 0 10px 0;
+            font-size: 16px;
+            color: #4CAF50;
+        }
+        
+        /* 评论区样式 */
+        .comment-item {
+            position: relative;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        
+        .delete-comment {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px 10px;
+            background-color: #ffebee;
+            border-radius: 4px;
+            display: inline-block;
+            z-index: 10;
+            user-select: none;
+        }
+        
+        .login-prompt {
+            text-align: center;
+            padding: 20px;
+            background-color: #f0f8ff;
+            color: #666;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        #commentsTitle {
+            background-color: #1a73e8;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 0;
+            font-size: 18px;
+            text-align: center;
+        }
+        
+        .comments-section {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        
+        .comment-input {
+            padding: 15px;
+            background-color: white;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .comments-list {
+            padding: 15px;
+            background-color: white;
+            min-height: 100px;
+        }
+        
+        .no-comments {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="back-btn" id="backBtn">
+            <img src="images/back.png" alt="返回">
+        </div>
+        <div class="logo">宠物资讯详情</div>
+    </nav>
+
+    <!-- 资讯详情 -->
+    <div class="news-detail-container">
+        <h1>宠物春季常见疾病预防指南</h1>
+        
+        <div class="news-meta">
+            <span class="source">宠物健康中心</span>
+            <span class="time">2025-03-15</span>
+        </div>
+        
+        <div class="detail-image">
+            <img src="images/news1.jpg" alt="宠物春季常见疾病预防">
+        </div>
+        
+        <div class="detail-content">
+            <p>春季是万物复苏的季节，但同时也是宠物疾病高发的时期。随着气温的回升和湿度的增加，各种病原体也开始活跃起来。以下是春季常见的宠物疾病及预防措施：</p>
+            
+            <h4>1. 寄生虫感染</h4>
+            <p>春季是寄生虫繁殖的高峰期，跳蚤、虱子、螨虫等体外寄生虫以及蛔虫、钩虫等体内寄生虫都会对宠物的健康造成威胁。</p>
+            <p><strong>预防措施：</strong>定期为宠物进行驱虫，保持宠物生活环境的清洁卫生，避免宠物接触可能被寄生虫污染的环境。</p>
+            
+            <h4>2. 呼吸道疾病</h4>
+            <p>春季气温变化较大，忽冷忽热的天气容易导致宠物免疫下降，引发呼吸道疾病。</p>
+            <p><strong>预防措施：</strong>注意给宠物保暖，避免忽冷忽热，保持室内空气流通，定期带宠物进行体检。</p>
+            
+            <h4>3. 过敏反应</h4>
+            <p>春季花粉、尘螨等过敏原增多，容易引发宠物的过敏反应，表现为皮肤瘙痒、红肿、打喷嚏的症状。</p>
+            <p><strong>预防措施：</strong>减少宠物接触过敏原的机会，保持宠物皮肤清洁，必要时咨询兽医进行脱敏治疗。</p>
+        </div>
+        
+        <!-- 评论区 -->
+        <div class="comments-section">
+            <h4 id="commentsTitle">评论 (0)</h4>
+            <div class="comment-input">
+                <textarea id="commentText" placeholder="写下您的评论..."></textarea>
+                <button id="submitComment">提交评论</button>
+            </div>
+            <div class="comments-list" id="commentsList">
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 使用纯JavaScript实现评论功能，避免jQuery相关问题
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('页面加载完成，开始初始化评论功能');
+              
+            // 为了测试方便，自动设置一个模拟用户
+            localStorage.setItem('user', JSON.stringify({
+                isLogin: true,
+                userId: 'test_user_123',
+                username: 'user'
+            }));
+              
+            // 清空现有的评论数据，确保不会显示旧的不包含删除按钮的评论
+            localStorage.removeItem('comments_news1');
+              
+            // 返回按钮点击事件
+            document.getElementById('backBtn').addEventListener('click', function() {
+                window.location.href = 'news.html';
+            });
+              
+            // 检查用户是否登录
+            const user = JSON.parse(localStorage.getItem('user')) || { isLogin: false };
+            console.log('当前用户状态:', user);
+              
+            // 如果用户未登录，隐藏评论输入框
+            if (!user.isLogin) {
+                document.querySelector('.comment-input').style.display = 'none';
+                const commentsList = document.getElementById('commentsList');
+                const loginPrompt = document.createElement('div');
+                loginPrompt.className = 'login-prompt';
+                loginPrompt.textContent = '请先登录后再评论';
+                commentsList.parentNode.insertBefore(loginPrompt, commentsList);
+            }
+              
+            // 生成模拟评论数据
+            generateMockComments('news1');
+            
+            // 加载已保存的评论
+            loadComments('news1');
+            
+            // 初始化评论总数显示
+            updateCommentsCount('news1');
+            
+            // 提交评论
+            document.getElementById('submitComment').addEventListener('click', function() {
+                const commentText = document.getElementById('commentText').value.trim();
+                
+                if (!commentText) {
+                    alert('请输入评论内容');
+                    return;
+                }
+                
+                // 检查用户是否登录
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.isLogin) {
+                    alert('请先登录');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const username = user.username || '用户';
+                const userId = user.userId || 'unknown';
+                const now = new Date();
+                const time = now.getFullYear() + '-' + 
+                             String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                             String(now.getDate()).padStart(2, '0') + ' ' +
+                             String(now.getHours()).padStart(2, '0') + ':' +
+                             String(now.getMinutes()).padStart(2, '0') + ':' +
+                             String(now.getSeconds()).padStart(2, '0');
+                const commentId = 'comment_' + Date.now();
+                
+                // 创建新评论对象
+                const newComment = {
+                    id: commentId,
+                    author: username,
+                    userId: userId,
+                    content: commentText,
+                    time: time
+                };
+                
+                // 保存评论到localStorage
+                saveComment('news1', newComment);
+                
+                // 添加到评论列表
+                addCommentToUI(newComment, user);
+                
+                // 清空输入框
+                document.getElementById('commentText').value = '';
+                
+                // 更新评论总数
+                updateCommentsCount('news1');
+                
+                alert('评论提交成功');
+            });
+        });
+        
+        // 保存评论到localStorage
+        function saveComment(newsId, comment) {
+            // 获取现有评论或创建空数组
+            const commentsKey = 'comments_' + newsId;
+            let existingComments = [];
+            
+            try {
+                existingComments = JSON.parse(localStorage.getItem(commentsKey) || '[]');
+                // 确保是数组
+                if (!Array.isArray(existingComments)) {
+                    existingComments = [];
+                }
+            } catch (e) {
+                console.error('解析现有评论出错:', e);
+                existingComments = [];
+            }
+            
+            // 添加新评论
+            existingComments.push(comment);
+            
+            // 保存回localStorage
+            localStorage.setItem(commentsKey, JSON.stringify(existingComments));
+        }
+        
+        // 从localStorage加载评论
+        function loadComments(newsId) {
+            const commentsKey = 'comments_' + newsId;
+            let comments = [];
+            
+            try {
+                comments = JSON.parse(localStorage.getItem(commentsKey) || '[]');
+                // 确保是数组
+                if (!Array.isArray(comments)) {
+                    comments = [];
+                }
+            } catch (e) {
+                console.error('解析评论出错，使用空数组:', e);
+                comments = [];
+            }
+            
+            const user = JSON.parse(localStorage.getItem('user')) || { isLogin: false };
+            
+            const commentsList = document.getElementById('commentsList');
+            
+            // 清空列表
+            commentsList.innerHTML = '';
+            
+            // 如果没有评论，显示提示
+            if (comments.length === 0) {
+                const noComments = document.createElement('div');
+                noComments.className = 'no-comments';
+                noComments.textContent = '暂无评论，快来发表第一条评论吧！';
+                commentsList.appendChild(noComments);
+                return;
+            }
+            
+            // 添加每条评论到UI
+            comments.forEach(comment => {
+                if (comment && comment.id) { // 确保评论对象有效
+                    addCommentToUI(comment, user);
+                }
+            });
+        }
+        
+        // 添加评论到UI
+        function addCommentToUI(comment, currentUser) {
+            const commentsList = document.getElementById('commentsList');
+            const isCurrentUserComment = currentUser.isLogin && comment.userId === currentUser.userId;
+            
+            // 创建评论元素
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'comment-item';
+            commentDiv.dataset.commentId = comment.id;
+            
+            // 作者信息
+            const authorDiv = document.createElement('div');
+            authorDiv.className = 'comment-author';
+            authorDiv.textContent = comment.author;
+            commentDiv.appendChild(authorDiv);
+            
+            // 时间信息
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'comment-time';
+            timeDiv.textContent = comment.time;
+            commentDiv.appendChild(timeDiv);
+            
+            // 内容信息
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'comment-content';
+            contentDiv.textContent = comment.content;
+            commentDiv.appendChild(contentDiv);
+            
+            // 如果是当前用户的评论，添加删除按钮
+            if (isCurrentUserComment) {
+                const deleteBtn = document.createElement('div');
+                deleteBtn.className = 'delete-comment';
+                deleteBtn.textContent = '删除';
+                
+                // 直接为删除按钮添加点击事件
+                deleteBtn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // 防止事件冒泡
+                    console.log('删除按钮被点击，评论ID:', comment.id);
+                    
+                    // 先从UI中移除，提供即时视觉反馈
+                    commentDiv.style.transition = 'opacity 0.3s ease-out';
+                    commentDiv.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        commentsList.removeChild(commentDiv);
+                        
+                        // 更新UI（如果删除后没有评论了，显示提示）
+                        if (commentsList.children.length === 0) {
+                            const noComments = document.createElement('div');
+                            noComments.className = 'no-comments';
+                            noComments.textContent = '暂无评论，快来发表第一条评论吧！';
+                            commentsList.appendChild(noComments);
+                        }
+                    }, 300);
+                    
+                    // 从存储中删除评论
+                    removeCommentFromStorage('news1', comment.id);
+                });
+                
+                commentDiv.appendChild(deleteBtn);
+            }
+            
+            // 如果是第一条评论，移除"暂无评论"提示
+            const noCommentsEl = commentsList.querySelector('.no-comments');
+            if (noCommentsEl) {
+                commentsList.removeChild(noCommentsEl);
+            }
+            
+            // 添加到评论列表
+            commentsList.appendChild(commentDiv);
+            console.log('添加评论到UI:', comment.id, '是否显示删除按钮:', isCurrentUserComment);
+        }
+        
+        // 从存储中删除评论
+        function removeCommentFromStorage(newsId, commentId) {
+            console.log('从存储中删除评论:', commentId);
+            try {
+                const commentsKey = 'comments_' + newsId;
+                
+                // 直接删除整个存储项然后重新添加，确保彻底更新
+                let comments = [];
+                const commentsJson = localStorage.getItem(commentsKey);
+                if (commentsJson) {
+                    comments = JSON.parse(commentsJson);
+                    // 确保是数组
+                    if (!Array.isArray(comments)) {
+                        comments = [];
+                    }
+                }
+                
+                // 过滤掉要删除的评论
+                comments = comments.filter(comment => comment && comment.id !== commentId);
+                
+                // 先移除再添加，确保彻底更新
+                localStorage.removeItem(commentsKey);
+                localStorage.setItem(commentsKey, JSON.stringify(comments));
+                
+                console.log('存储操作完成，当前评论数量:', comments.length);
+                
+                 // 更新评论总数
+                 updateCommentsCount(newsId);
+                 
+                 // 提供视觉反馈
+                 alert('评论已成功删除');
+            } catch (error) {
+                console.error('从存储删除评论时出错:', error);
+                alert('删除评论时出错，请刷新页面重试');
+            }
+        }
+        
+        // 更新评论总数显示
+        function updateCommentsCount(newsId) {
+            const commentsKey = 'comments_' + newsId;
+            let count = 0;
+            
+            try {
+                const comments = JSON.parse(localStorage.getItem(commentsKey) || '[]');
+                if (Array.isArray(comments)) {
+                    count = comments.length;
+                }
+            } catch (e) {
+                console.error('更新评论计数时出错:', e);
+            }
+            
+            document.getElementById('commentsTitle').textContent = `评论 (${count})`;
+        }
+        
+        // 生成模拟评论数据
+        function generateMockComments(newsId) {
+            const commentsKey = 'comments_' + newsId;
+            
+            // 检查是否已有评论，如果有则不生成模拟数据
+            try {
+                const existingComments = JSON.parse(localStorage.getItem(commentsKey) || '[]');
+                if (Array.isArray(existingComments) && existingComments.length > 0) {
+                    console.log('已有评论数据，不生成模拟评论');
+                    return;
+                }
+            } catch (e) {
+                console.error('检查现有评论时出错:', e);
+            }
+            
+            // 模拟评论数据
+            const mockUsers = [
+                { id: 'user_1', name: '宠物爱好者小王' },
+                { id: 'user_2', name: '猫咪铲屎官' },
+                { id: 'user_3', name: '狗狗守护者' },
+                { id: 'user_4', name: '养宠新手' },
+                { id: 'user_5', name: '宠物医生' },
+                { id: 'user_6', name: '动物爱好者' },
+                { id: 'user_7', name: '金毛妈妈' },
+                { id: 'user_8', name: '波斯猫主人' },
+                { id: 'user_9', name: '宠物营养师' },
+                { id: 'user_10', name: '宠物训练师' }
+            ];
+            
+            const mockComments = [
+                { content: '感谢分享！我家猫咪去年春天就得了呼吸道疾病，确实需要特别注意。', author: mockUsers[0] },
+                { content: '请问体外驱虫和体内驱虫一般多久做一次比较合适？', author: mockUsers[1] },
+                { content: '文章写得很详细，收藏了，准备给我家狗狗做春季体检。', author: mockUsers[2] },
+                { content: '我家狗狗对花粉过敏，一到春天就会打喷嚏，有什么特别好的缓解方法吗？', author: mockUsers[3] },
+                { content: '作为宠物医生，我建议春季一定要保持宠物生活环境的清洁，定期消毒。', author: mockUsers[4] },
+                { content: '学到了！原来春季宠物也需要特别注意保暖，不能忽冷忽热。', author: mockUsers[5] },
+                { content: '我家金毛每年春天都会掉很多毛，有什么好的梳理方法推荐吗？', author: mockUsers[6] },
+                { content: '春季带猫咪出门需要注意什么？会增加感染寄生虫的风险吗？', author: mockUsers[7] },
+                { content: '春季是宠物营养调整的关键时期，建议增加一些增强免疫力的食物。', author: mockUsers[8] },
+                { content: '训练宠物在春季特别容易兴奋，这是正常现象吗？需要特别的训练方法吗？', author: mockUsers[9] },
+                { content: '感谢提醒，刚好准备给我家猫咪做驱虫，这篇文章来得太及时了。', author: mockUsers[0] },
+                { content: '请问除了定期驱虫，还有什么预防寄生虫的好方法吗？', author: mockUsers[1] },
+                { content: '我家狗狗春天总是喜欢在草地上打滚，这会增加感染寄生虫的风险吗？', author: mockUsers[2] },
+                { content: '文章很实用，已经分享给同样养宠物的朋友们了。', author: mockUsers[3] },
+                { content: '春季宠物的饮水量是不是也需要特别关注？容易脱水吗？', author: mockUsers[4] },
+                { content: '我家猫咪春天食欲好像下降了，这正常吗？需要调整饮食吗？', author: mockUsers[5] },
+                { content: '谢谢分享，已经把春季预防措施列了清单，准备逐一实施。', author: mockUsers[6] },
+                { content: '请问宠物春季过敏和感冒的症状有什么区别？', author: mockUsers[7] },
+                { content: '作为养宠新手，这篇文章对我帮助很大，感谢分享！', author: mockUsers[8] },
+                { content: '春季带宠物外出，需要准备哪些应急药品？', author: mockUsers[9] }
+            ];
+            
+            // 生成评论时间，随机分布在最近一个月内
+            const now = new Date();
+            const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            
+            // 保存模拟评论
+            mockComments.forEach((comment, index) => {
+                // 生成随机时间
+                const randomTime = new Date(oneMonthAgo.getTime() + Math.random() * (now.getTime() - oneMonthAgo.getTime()));
+                const formattedTime = randomTime.getFullYear() + '-' + 
+                                    String(randomTime.getMonth() + 1).padStart(2, '0') + '-' + 
+                                    String(randomTime.getDate()).padStart(2, '0') + ' ' +
+                                    String(randomTime.getHours()).padStart(2, '0') + ':' +
+                                    String(randomTime.getMinutes()).padStart(2, '0') + ':' +
+                                    String(randomTime.getSeconds()).padStart(2, '0');
+                
+                // 创建评论对象
+                const newComment = {
+                    id: `mock_comment_${index}_${Date.now()}`,
+                    author: comment.author.name,
+                    userId: comment.author.id,
+                    content: comment.content,
+                    time: formattedTime
+                };
+                
+                // 保存评论
+                saveComment(newsId, newComment);
+            });
+            
+            console.log('已生成20条模拟评论');
+        }
+    </script>
+</body>
+</html>

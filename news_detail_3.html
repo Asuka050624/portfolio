@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>不同年龄段猫咪的营养需求 - 宠物健康管理系统</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/jquery.min.js"></script>
+    <style>
+        .comment-item {
+            position: relative;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        .delete-comment {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px 10px;
+            background-color: #ffebee;
+            border-radius: 4px;
+            display: inline-block !important;
+        }
+        .login-prompt {
+            text-align: center;
+            padding: 20px;
+            background-color: #f0f8ff;
+            color: #666;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .no-comments {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+        }
+    </style>
+    <script>
+        // 页面加载完成后执行
+        $(document).ready(function() {
+            // 返回按钮点击事件
+            $('#backBtn').click(function() {
+                window.location.href = 'news.html';
+            });
+            
+            // 检查用户是否登录
+            const user = JSON.parse(localStorage.getItem('user')) || { isLogin: false };
+            
+            // 如果用户未登录，隐藏评论输入框
+            if (!user.isLogin) {
+                $('.comment-input').hide();
+                $('#commentsList').before('<div class="login-prompt">请先登录后再评论</div>');
+            }
+            
+            // 加载已保存的评论
+            loadComments('news3');
+            
+            // 提交评论
+            $('#submitComment').click(function() {
+                const commentText = $('#commentText').val().trim();
+                
+                if (!commentText) {
+                    alert('请输入评论内容');
+                    return;
+                }
+                
+                // 检查用户是否登录
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.isLogin) {
+                    alert('请先登录');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const username = user.username || '用户';
+                const userId = user.userId || 'unknown';
+                const now = new Date();
+                const time = now.getFullYear() + '-' + 
+                             String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                             String(now.getDate()).padStart(2, '0') + ' ' +
+                             String(now.getHours()).padStart(2, '0') + ':' +
+                             String(now.getMinutes()).padStart(2, '0') + ':' +
+                             String(now.getSeconds()).padStart(2, '0');
+                const commentId = 'comment_' + Date.now();
+                
+                // 创建新评论对象
+                const newComment = {
+                    id: commentId,
+                    author: username,
+                    userId: userId,
+                    content: commentText,
+                    time: time
+                };
+                
+                // 保存评论到localStorage
+                saveComment('news3', newComment);
+                
+                // 添加到评论列表
+                addCommentToUI(newComment, user);
+                
+                // 清空输入框
+                $('#commentText').val('');
+                
+                alert('评论提交成功');
+            });
+        });
+        
+        // 保存评论到localStorage
+        function saveComment(newsId, comment) {
+            // 获取现有评论或创建空数组
+            const commentsKey = 'comments_' + newsId;
+            const existingComments = JSON.parse(localStorage.getItem(commentsKey) || '[]');
+            
+            // 添加新评论
+            existingComments.push(comment);
+            
+            // 保存回localStorage
+            localStorage.setItem(commentsKey, JSON.stringify(existingComments));
+        }
+        
+        // 从localStorage加载评论
+        function loadComments(newsId) {
+            const commentsKey = 'comments_' + newsId;
+            const comments = JSON.parse(localStorage.getItem(commentsKey) || '[]');
+            const user = JSON.parse(localStorage.getItem('user')) || { isLogin: false };
+            
+            const commentsList = $('#commentsList');
+            
+            // 清空列表
+            commentsList.empty();
+            
+            // 如果没有评论，显示提示
+            if (comments.length === 0) {
+                commentsList.append('<div class="no-comments">暂无评论，快来发表第一条评论吧！</div>');
+                return;
+            }
+            
+            // 添加每条评论到UI
+            comments.forEach(comment => {
+                addCommentToUI(comment, user);
+            });
+        }
+        
+        // 添加评论到UI
+        function addCommentToUI(comment, currentUser) {
+            const commentsList = $('#commentsList');
+            const isCurrentUserComment = currentUser.isLogin && comment.userId === currentUser.userId;
+            
+            const commentHtml = `
+                <div class="comment-item" data-comment-id="${comment.id}">
+                    <div class="comment-author">${comment.author}</div>
+                    <div class="comment-time">${comment.time}</div>
+                    <div class="comment-content">${comment.content}</div>
+                    ${isCurrentUserComment ? '<div class="delete-comment">删除</div>' : ''}
+                </div>
+            `;
+            
+            // 如果是第一条评论，移除"暂无评论"提示
+            if (commentsList.find('.no-comments').length > 0) {
+                commentsList.empty();
+            }
+            
+            commentsList.append(commentHtml);
+            
+            // 为新添加的删除按钮绑定事件
+            if (isCurrentUserComment) {
+                $('.comment-item[data-comment-id="' + comment.id + '"] .delete-comment').click(function() {
+                    deleteComment('news3', comment.id);
+                    $(this).closest('.comment-item').remove();
+                    
+                    // 如果删除后没有评论了，显示提示
+                    if (commentsList.find('.comment-item').length === 0) {
+                        commentsList.append('<div class="no-comments">暂无评论，快来发表第一条评论吧！</div>');
+                    }
+                });
+            }
+        }
+        
+        // 从localStorage删除评论
+        function deleteComment(newsId, commentId) {
+            const commentsKey = 'comments_' + newsId;
+            let comments = JSON.parse(localStorage.getItem(commentsKey) || '[]');
+            
+            // 过滤掉要删除的评论
+            comments = comments.filter(comment => comment.id !== commentId);
+            
+            // 保存回localStorage
+            localStorage.setItem(commentsKey, JSON.stringify(comments));
+            
+            alert('评论已删除');
+        }
+    </script>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo">宠物资讯详情</div>
+        <div class="back-btn" id="backBtn">
+            <img src="images/back.png" alt="返回">
+        </div>
+    </nav>
+
+    <!-- 资讯详情 -->
+    <div class="news-detail-container">
+        <h1>不同年龄段猫咪的营养需求</h1>
+        
+        <div class="news-meta">
+            <span class="source">宠物营养师</span>
+            <span class="time">2025-03-05</span>
+        </div>
+        
+        <div class="detail-image">
+            <img src="images/news3.jpg" alt="不同年龄段猫咪的营养需求">
+        </div>
+        
+        <div class="detail-content">
+            <p>猫咪在不同生长阶段有不同的营养需求，了解这些有助于为您的猫咪提供健康饮食。以下是猫咪在各个年龄段的营养需求特点：</p>
+            
+            <h4>1. 幼猫期（0-6个月）</h4>
+            <p>幼猫正处于快速生长发育阶段，需要高蛋白质、高能量和全面的营养。</p>
+            <p><strong>营养需求：</strong>蛋白质含量应在35-45%左右，需要较高的脂肪含量提供能量，同时需要丰富的钙、磷等矿物质以支持骨骼发育。建议选择专门为幼猫设计的猫粮。</p>
+            
+            <h4>2. 成长期（6个月-1岁）</h4>
+            <p>这一阶段猫咪的生长速度放缓，但仍需要均衡的营养支持发育。</p>
+            <p><strong>营养需求：</strong>蛋白质含量可适当降低至30-35%，脂肪含量也可相应减少。需要注意控制热量摄入，避免肥胖。</p>
+            
+            <h4>3. 成年期（1-7岁）</h4>
+            <p>成年猫咪的营养需求相对稳定，但仍需根据活动量和健康状况进行调整。</p>
+            <p><strong>营养需求：</strong>保持25-30%的蛋白质含量，脂肪含量控制在10-15%。确保摄入足够的维生素和矿物质，特别是牛磺酸等猫咪必需的营养物质。</p>
+            
+            <h4>4. 老年期（7岁以上）</h4>
+            <p>老年猫咪的代谢率下降，活动量减少，容易出现各种健康问题。</p>
+            <p><strong>营养需求：</strong>蛋白质含量应适当提高以维持肌肉质量，但需要选择易消化的蛋白质来源。脂肪含量应降低至10%以下，增加膳食纤维以促进消化。同时需要注意补充关节保健成分如葡萄糖胺和软骨素。</p>
+        </div>
+        
+        <!-- 评论区 -->
+        <div class="comments-section">
+            <h4>评论</h4>
+            <div class="comment-input">
+                <textarea id="commentText" placeholder="写下您的评论..."></textarea>
+                <button id="submitComment">提交评论</button>
+            </div>
+            <div class="comments-list" id="commentsList">
+                <div class="comment-item">
+                    <div class="comment-author">猫奴一枚</div>
+                    <div class="comment-time">2023-03-06</div>
+                    <div class="comment-content">我家猫咪已经10岁了，最近确实感觉需要调整饮食了，谢谢分享！</div>
+                </div>
+                <div class="comment-item">
+                    <div class="comment-author">宠物医生</div>
+                    <div class="comment-time">2023-03-07</div>
+                    <div class="comment-content">补充一点，老年猫咪需要特别注意水分摄入，可以考虑增加湿粮的比例。</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

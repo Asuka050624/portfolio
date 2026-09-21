@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>评论删除功能测试</title>
+    <style>
+        .comment-item {
+            position: relative;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px 10px;
+            background-color: #ffebee;
+            border-radius: 4px;
+            z-index: 10;
+        }
+        #addComment {
+            margin-top: 20px;
+            padding: 10px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        textarea {
+            width: 100%;
+            height: 80px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>评论删除功能测试</h1>
+    
+    <!-- 评论输入区 -->
+    <div id="addComment">
+        <textarea id="commentText" placeholder="输入评论内容..."></textarea>
+        <button id="submitBtn">添加评论</button>
+    </div>
+    
+    <!-- 评论列表 -->
+    <div id="commentsList">
+        <!-- 评论将在这里动态添加 -->
+    </div>
+    
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为确保测试效果，设置一个模拟用户
+            localStorage.setItem('user', JSON.stringify({
+                isLogin: true,
+                userId: 'test_user_123',
+                username: '测试用户'
+            }));
+            
+            // 加载评论
+            loadComments();
+            
+            // 添加评论按钮点击事件
+            document.getElementById('submitBtn').addEventListener('click', function() {
+                const commentText = document.getElementById('commentText').value.trim();
+                if (!commentText) {
+                    alert('请输入评论内容');
+                    return;
+                }
+                
+                const user = JSON.parse(localStorage.getItem('user'));
+                const now = new Date();
+                const time = now.getFullYear() + '-' + 
+                             String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                             String(now.getDate()).padStart(2, '0') + ' ' +
+                             String(now.getHours()).padStart(2, '0') + ':' +
+                             String(now.getMinutes()).padStart(2, '0') + ':' +
+                             String(now.getSeconds()).padStart(2, '0');
+                const commentId = 'comment_' + Date.now();
+                
+                const newComment = {
+                    id: commentId,
+                    author: user.username,
+                    userId: user.userId,
+                    content: commentText,
+                    time: time
+                };
+                
+                // 保存到localStorage
+                let comments = JSON.parse(localStorage.getItem('test_comments') || '[]');
+                comments.push(newComment);
+                localStorage.setItem('test_comments', JSON.stringify(comments));
+                
+                // 添加到UI
+                addCommentToUI(newComment, user);
+                
+                // 清空输入框
+                document.getElementById('commentText').value = '';
+            });
+        });
+        
+        // 加载评论
+        function loadComments() {
+            const comments = JSON.parse(localStorage.getItem('test_comments') || '[]');
+            const user = JSON.parse(localStorage.getItem('user'));
+            const commentsList = document.getElementById('commentsList');
+            
+            // 清空列表
+            commentsList.innerHTML = '';
+            
+            // 如果没有评论，显示提示
+            if (comments.length === 0) {
+                commentsList.innerHTML = '<div>暂无评论，快来添加第一条评论！</div>';
+                return;
+            }
+            
+            // 添加每条评论到UI
+            comments.forEach(comment => {
+                addCommentToUI(comment, user);
+            });
+        }
+        
+        // 添加评论到UI
+        function addCommentToUI(comment, currentUser) {
+            const commentsList = document.getElementById('commentsList');
+            const isCurrentUserComment = currentUser && 
+                                       currentUser.isLogin && 
+                                       comment.userId === currentUser.userId;
+            
+            // 创建评论元素
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'comment-item';
+            commentDiv.dataset.commentId = comment.id;
+            
+            // 设置评论内容
+            commentDiv.innerHTML = `
+                <div class="comment-author">${comment.author}</div>
+                <div class="comment-time">${comment.time}</div>
+                <div class="comment-content">${comment.content}</div>
+                ${isCurrentUserComment ? '<div class="delete-btn">删除</div>' : ''}
+            `;
+            
+            // 如果需要添加删除按钮，则添加点击事件
+            if (isCurrentUserComment) {
+                const deleteBtn = commentDiv.querySelector('.delete-btn');
+                deleteBtn.addEventListener('click', function() {
+                    // 立即移除评论元素
+                    commentDiv.style.transition = 'opacity 0.3s ease-out';
+                    commentDiv.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        commentsList.removeChild(commentDiv);
+                        
+                        // 如果删除后没有评论了，显示提示
+                        if (commentsList.children.length === 0) {
+                            commentsList.innerHTML = '<div>暂无评论，快来添加第一条评论！</div>';
+                        }
+                    }, 300);
+                    
+                    // 从localStorage中删除
+                    let comments = JSON.parse(localStorage.getItem('test_comments') || '[]');
+                    comments = comments.filter(c => c.id !== comment.id);
+                    localStorage.setItem('test_comments', JSON.stringify(comments));
+                    
+                    // 显示删除成功的提示
+                    alert('评论已成功删除');
+                });
+            }
+            
+            // 添加到评论列表
+            commentsList.appendChild(commentDiv);
+        }
+    </script>
+</body>
+</html>

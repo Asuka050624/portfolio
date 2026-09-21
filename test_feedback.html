@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>反馈功能测试 - 宠物健康管理系统</title>
+    <script src="js/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+        }
+        .test-case {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-case h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 3px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .failed {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-btn {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .test-btn:hover {
+            background-color: #45a049;
+        }
+        .test-output {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 3px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <h1>宠物健康管理系统 - 反馈功能测试</h1>
+    
+    <div class="test-case">
+        <h3>测试用例1：表单验证测试 - 必填字段和长度限制</h3>
+        <p>测试反馈表单中的必填字段验证和内容长度限制</p>
+        <button class="test-btn" onclick="testFeedbackValidation()">执行测试</button>
+        <div class="test-output" id="output1"></div>
+        <div class="result" id="result1"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>测试用例2：反馈提交测试</h3>
+        <p>测试完整的反馈提交流程</p>
+        <div class="form-group">
+            <label for="testFeedbackType">反馈类型：</label>
+            <select id="testFeedbackType">
+                <option value="suggestion">建议</option>
+                <option value="bug">问题反馈</option>
+                <option value="other">其他</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="testFeedbackContent">反馈内容：</label>
+            <textarea id="testFeedbackContent">我希望系统能够增加更多的宠物食品选择，特别是有机天然的食品，这样对宠物的健康更有好处。</textarea>
+        </div>
+        <div class="form-group">
+            <label for="testContactInfo">联系方式：</label>
+            <input type="text" id="testContactInfo" value="test@example.com">
+        </div>
+        <button class="test-btn" onclick="testSubmitFeedback()">执行测试</button>
+        <div class="test-output" id="output2"></div>
+        <div class="result" id="result2"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>测试用例3：联系方式格式验证</h3>
+        <p>测试邮箱和电话号码格式验证功能</p>
+        <button class="test-btn" onclick="testContactValidation()">执行测试</button>
+        <div class="test-output" id="output3"></div>
+        <div class="result" id="result3"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>测试用例4：未登录状态下的反馈测试</h3>
+        <p>测试在未登录状态下尝试提交反馈时的行为</p>
+        <button class="test-btn" onclick="testUnauthorizedFeedback()">执行测试</button>
+        <div class="test-output" id="output4"></div>
+        <div class="result" id="result4"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>测试用例5：反馈数据存储测试</h3>
+        <p>测试反馈数据是否正确存储在localStorage中</p>
+        <button class="test-btn" onclick="testFeedbackStorage()">执行测试</button>
+        <div class="test-output" id="output5"></div>
+        <div class="result" id="result5"></div>
+    </div>
+    
+    <script>
+        // 模拟表单验证函数
+        function validateFeedbackForm(formData) {
+            const errors = [];
+            
+            // 检查反馈类型
+            if (!formData.type) {
+                errors.push('请选择反馈类型');
+            }
+            
+            // 检查反馈内容
+            if (!formData.content || formData.content.trim() === '') {
+                errors.push('请输入反馈内容');
+            }
+            
+            // 反馈内容长度限制
+            if (formData.content && formData.content.length < 10) {
+                errors.push('反馈内容至少需要10个字符');
+            }
+            
+            // 联系方式格式验证（如果填写了）
+            if (formData.contact && formData.contact.trim()) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const phoneRegex = /^1[3-9]\d{9}$/;
+                
+                if (!emailRegex.test(formData.contact) && !phoneRegex.test(formData.contact)) {
+                    errors.push('请输入正确的邮箱或手机号码');
+                }
+            }
+            
+            return {
+                isValid: errors.length === 0,
+                errors: errors
+            };
+        }
+        
+        // 获取反馈类型文本
+        function getTypeText(type) {
+            const typeMap = {
+                'suggestion': '建议',
+                'bug': '问题反馈',
+                'other': '其他'
+            };
+            return typeMap[type] || '未知类型';
+        }
+        
+        // 模拟反馈提交函数
+        function submitFeedback(formData) {
+            // 检查用户是否登录
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || !user.isLogin) {
+                return { success: false, message: '请先登录', requiresLogin: true };
+            }
+            
+            // 验证表单
+            const validation = validateFeedbackForm(formData);
+            if (!validation.isValid) {
+                return { success: false, message: validation.errors.join('; '), errors: validation.errors };
+            }
+            
+            // 生成反馈ID
+            const feedbackId = 'FB' + Date.now();
+            
+            // 获取当前登录用户
+            const username = user.username || '用户';
+            
+            // 构建完整的反馈信息
+            const feedbackInfo = {
+                id: feedbackId,
+                username: username,
+                type: formData.type,
+                typeText: getTypeText(formData.type),
+                content: formData.content,
+                contact: formData.contact,
+                status: 'pending', // 待处理状态
+                submitTime: new Date().toLocaleString('zh-CN'),
+                reply: '' // 初始无回复
+            };
+            
+            // 获取现有反馈列表
+            let feedbacks = [];
+            try {
+                const existingFeedbacks = localStorage.getItem('feedbacks');
+                if (existingFeedbacks) {
+                    feedbacks = JSON.parse(existingFeedbacks);
+                }
+            } catch (e) {
+                console.error('解析反馈数据失败:', e);
+            }
+            
+            // 添加新反馈
+            feedbacks.push(feedbackInfo);
+            
+            // 保存回localStorage
+            localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+            
+            return { success: true, message: '反馈提交成功！', feedbackId: feedbackId };
+        }
+        
+        // 模拟用户登录状态
+        function mockUserLogin() {
+            const mockUser = {
+                username: '测试用户',
+                isLogin: true,
+                timestamp: new Date().getTime()
+            };
+            localStorage.setItem('user', JSON.stringify(mockUser));
+            return mockUser;
+        }
+        
+        // 清除用户登录状态
+        function clearUserLogin() {
+            localStorage.removeItem('user');
+        }
+        
+        // 测试用例1：表单验证测试 - 必填字段和长度限制
+        function testFeedbackValidation() {
+            const output = document.getElementById('output1');
+            const result = document.getElementById('result1');
+            
+            output.textContent = '测试中...\n';
+            
+            // 测试空表单
+            const emptyForm = {};
+            const emptyValidation = validateFeedbackForm(emptyForm);
+            output.textContent += '空表单测试结果:\n';
+            output.textContent += `- 验证通过: ${emptyValidation.isValid}\n`;
+            output.textContent += `- 错误信息: ${emptyValidation.errors.join('; ')}\n\n`;
+            
+            // 测试缺少反馈类型
+            const noTypeForm = {
+                content: '这是一个测试反馈内容',
+                contact: 'test@example.com'
+            };
+            const noTypeValidation = validateFeedbackForm(noTypeForm);
+            output.textContent += '缺少反馈类型测试结果:\n';
+            output.textContent += `- 验证通过: ${noTypeValidation.isValid}\n`;
+            output.textContent += `- 错误信息: ${noTypeValidation.errors.join('; ')}\n\n`;
+            
+            // 测试内容过短
+            const shortContentForm = {
+                type: 'suggestion',
+                content: '太短'
+            };
+            const shortContentValidation = validateFeedbackForm(shortContentForm);
+            output.textContent += '内容过短测试结果:\n';
+            output.textContent += `- 验证通过: ${shortContentValidation.isValid}\n`;
+            output.textContent += `- 错误信息: ${shortContentValidation.errors.join('; ')}\n\n`;
+            
+            // 测试有效表单
+            const validForm = {
+                type: 'suggestion',
+                content: '这是一个有效的反馈内容，长度超过10个字符。',
+                contact: 'test@example.com'
+            };
+            const validValidation = validateFeedbackForm(validForm);
+            output.textContent += '有效表单测试结果:\n';
+            output.textContent += `- 验证通过: ${validValidation.isValid}\n`;
+            output.textContent += `- 错误信息: ${validValidation.errors.join('; ')}\n\n`;
+            
+            // 验证测试结果
+            if (!emptyValidation.isValid && !noTypeValidation.isValid && 
+                !shortContentValidation.isValid && validValidation.isValid) {
+                result.className = 'result success';
+                result.textContent = '测试通过！所有表单验证正常工作。';
+            } else {
+                result.className = 'result failed';
+                result.textContent = '测试失败！某些验证未按预期工作。';
+            }
+        }
+        
+        // 测试用例2：反馈提交测试
+        function testSubmitFeedback() {
+            const output = document.getElementById('output2');
+            const result = document.getElementById('result2');
+            
+            output.textContent = '测试中...\n';
+            
+            // 确保用户已登录
+            mockUserLogin();
+            output.textContent += '用户已模拟登录\n\n';
+            
+            // 获取表单数据
+            const formData = {
+                type: document.getElementById('testFeedbackType').value,
+                content: document.getElementById('testFeedbackContent').value,
+                contact: document.getElementById('testContactInfo').value
+            };
+            
+            output.textContent += '提交的表单数据:\n';
+            output.textContent += JSON.stringify(formData, null, 2) + '\n\n';
+            
+            // 提交反馈
+            const submitResult = submitFeedback(formData);
+            
+            output.textContent += '提交结果:\n';
+            output.textContent += `- 成功: ${submitResult.success}\n`;
+            output.textContent += `- 消息: ${submitResult.message}\n`;
+            if (submitResult.feedbackId) {
+                output.textContent += `- 反馈ID: ${submitResult.feedbackId}\n`;
+            }
+            
+            if (submitResult.success) {
+                result.className = 'result success';
+                result.textContent = '测试通过！反馈提交成功。';
+            } else {
+                result.className = 'result failed';
+                result.textContent = '测试失败！反馈提交失败。';
+            }
+        }
+        
+        // 测试用例3：联系方式格式验证
+        function testContactValidation() {
+            const output = document.getElementById('output3');
+            const result = document.getElementById('result3');
+            
+            output.textContent = '测试中...\n';
+            
+            // 测试不同的联系方式格式
+            const contactTestCases = [
+                { contact: 'test@example.com', expected: true, description: '正确邮箱格式' },
+                { contact: 'invalid-email', expected: false, description: '无效邮箱格式' },
+                { contact: '13800138000', expected: true, description: '正确手机号格式' },
+                { contact: '1380013800', expected: false, description: '无效手机号格式(位数不足)' },
+                { contact: 'abc123456789', expected: false, description: '无效手机号格式(非数字)' },
+                { contact: '', expected: true, description: '空联系方式(可选)' }
+            ];
+            
+            let allPassed = true;
+            
+            for (const testCase of contactTestCases) {
+                // 构建测试表单数据
+                const formData = {
+                    type: 'suggestion',
+                    content: '这是一个测试反馈内容，长度足够。',
+                    contact: testCase.contact
+                };
+                
+                const validation = validateFeedbackForm(formData);
+                const actualResult = validation.isValid;
+                const testPassed = actualResult === testCase.expected;
+                
+                output.textContent += `${testCase.description}: ${testCase.contact || '(空)'}\n`;
+                output.textContent += `- 预期结果: ${testCase.expected ? '通过' : '失败'}\n`;
+                output.textContent += `- 实际结果: ${actualResult ? '通过' : '失败'}\n`;
+                output.textContent += `- 测试${testPassed ? '通过' : '失败'}\n\n`;
+                
+                if (!testPassed) {
+                    allPassed = false;
+                }
+            }
+            
+            if (allPassed) {
+                result.className = 'result success';
+                result.textContent = '测试通过！联系方式格式验证正常工作。';
+            } else {
+                result.className = 'result failed';
+                result.textContent = '测试失败！联系方式格式验证未按预期工作。';
+            }
+        }
+        
+        // 测试用例4：未登录状态下的反馈测试
+        function testUnauthorizedFeedback() {
+            const output = document.getElementById('output4');
+            const result = document.getElementById('result4');
+            
+            output.textContent = '测试中...\n';
+            
+            // 确保用户未登录
+            clearUserLogin();
+            output.textContent += '已清除用户登录状态\n\n';
+            
+            // 构建测试表单数据
+            const formData = {
+                type: 'suggestion',
+                content: '这是一个测试反馈内容',
+                contact: 'test@example.com'
+            };
+            
+            // 尝试提交反馈
+            const submitResult = submitFeedback(formData);
+            
+            output.textContent += '提交结果:\n';
+            output.textContent += `- 成功: ${submitResult.success}\n`;
+            output.textContent += `- 消息: ${submitResult.message}\n`;
+            output.textContent += `- 需要登录: ${submitResult.requiresLogin || false}\n`;
+            
+            if (!submitResult.success && submitResult.requiresLogin) {
+                result.className = 'result success';
+                result.textContent = '测试通过！未登录状态下正确阻止了反馈提交。';
+            } else {
+                result.className = 'result failed';
+                result.textContent = '测试失败！未正确处理未登录状态。';
+            }
+        }
+        
+        // 测试用例5：反馈数据存储测试
+        function testFeedbackStorage() {
+            const output = document.getElementById('output5');
+            const result = document.getElementById('result5');
+            
+            output.textContent = '测试中...\n';
+            
+            // 确保用户已登录
+            mockUserLogin();
+            output.textContent += '用户已模拟登录\n\n';
+            
+            // 保存原始反馈数据以便恢复
+            const originalFeedbacks = localStorage.getItem('feedbacks');
+            
+            // 清除现有反馈数据以进行干净测试
+            localStorage.removeItem('feedbacks');
+            output.textContent += '已清除现有反馈数据\n\n';
+            
+            // 构建测试表单数据
+            const testContent = '测试反馈存储功能的专用内容';
+            const formData = {
+                type: 'suggestion',
+                content: testContent,
+                contact: 'test-storage@example.com'
+            };
+            
+            // 提交反馈
+            const submitResult = submitFeedback(formData);
+            
+            if (submitResult.success) {
+                output.textContent += '反馈提交成功，检查存储...\n\n';
+                
+                // 从localStorage获取反馈数据
+                const storedFeedbacks = localStorage.getItem('feedbacks');
+                
+                if (storedFeedbacks) {
+                    try {
+                        const feedbacks = JSON.parse(storedFeedbacks);
+                        output.textContent += `存储的反馈数量: ${feedbacks.length}\n\n`;
+                        output.textContent += '最近的反馈详情:\n';
+                        output.textContent += JSON.stringify(feedbacks[feedbacks.length - 1], null, 2);
+                        
+                        // 验证是否包含刚提交的反馈
+                        const containsNewFeedback = feedbacks.some(feedback => 
+                            feedback.content === testContent
+                        );
+                        
+                        if (containsNewFeedback) {
+                            result.className = 'result success';
+                            result.textContent = '测试通过！反馈数据正确存储。';
+                        } else {
+                            result.className = 'result failed';
+                            result.textContent = '测试失败！存储的数据与提交的数据不匹配。';
+                        }
+                    } catch (e) {
+                        result.className = 'result failed';
+                        result.textContent = '测试失败！无法解析存储的反馈数据。';
+                        output.textContent += `错误: ${e.message}\n`;
+                    }
+                } else {
+                    result.className = 'result failed';
+                    result.textContent = '测试失败！localStorage中未找到反馈数据。';
+                }
+            } else {
+                result.className = 'result failed';
+                result.textContent = '测试失败！反馈提交失败，无法测试存储功能。';
+                output.textContent += `提交错误: ${submitResult.message}\n`;
+            }
+            
+            // 恢复原始反馈数据
+            if (originalFeedbacks) {
+                localStorage.setItem('feedbacks', originalFeedbacks);
+            }
+        }
+    </script>
+</body>
+</html>
