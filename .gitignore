@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.venv/
+.env
+.env.*
+
+# Node / 前端构建产物
+node_modules/
+dist/
+.vite/
+build/
+
+# Java / IDE
+*.class
+.idea/
+*.iml
+.vscode/
+
+# 数据库 / 编译产物
+*.db
+*.sqlite3
+cmake-build-*/
+.pio/
+
+# 系统
+.DS_Store
+Thumbs.db
+*.swp
+
+# 归档 / 大文件
+*.zip
+*.rar
+*.7z
