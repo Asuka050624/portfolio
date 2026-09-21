@@ -26,6 +26,10 @@
 
 > 每个项目目录内都有独立的 README.md 详细介绍。
 
+## 在线演示
+
+- 🚀 宠物健康社交 App（移动 Web 端）：https://Asuka050624.github.io/portfolio/
+
 ## 联系
 
 - GitHub：[@Asuka050624](https://github.com/Asuka050624)

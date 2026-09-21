@@ -2,6 +2,10 @@
 
 宠物健康系统的早期版本，覆盖桌面 GUI 与移动 Web 两端，是最终全栈版的前身。
 
+## 在线演示
+
+👉 https://Asuka050624.github.io/portfolio/ （移动 Web 端，已部署到 GitHub Pages）
+
 ## 目录结构
 
 ```
