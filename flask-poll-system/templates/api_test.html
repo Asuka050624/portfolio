@@ -1,0 +1,290 @@
+<!-- API测试工具 - HTML5文档 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test Tool</title>
+    <!-- 内联CSS样式，定义页面外观 -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 30px; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header p { font-size: 1.1rem; opacity: 0.9; }
+        .card { background: white; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 30px; margin-bottom: 25px; }
+        .card-title { font-size: 1.5rem; color: #333; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #eee; }
+        .btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 30px; border-radius: 30px; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; margin-right: 15px; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn-secondary { background: #6c757d; }
+        .btn-secondary:hover { box-shadow: 0 5px 20px rgba(108, 117, 125, 0.4); }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+        .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 10px; font-size: 1rem; transition: border-color 0.3s ease; }
+        .input-group input:focus, .input-group textarea:focus, .input-group select:focus { outline: none; border-color: #667eea; }
+        .input-group textarea { font-family: 'Consolas', 'Monaco', monospace; min-height: 120px; resize: vertical; }
+        .method-btns { display: flex; gap: 10px; margin-bottom: 20px; }
+        .method-btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; min-width: 80px; text-align: center; }
+        .method-btn.get { background: #28a745; color: white; }
+        .method-btn.post { background: #007bff; color: white; }
+        .method-btn.put { background: #ffc107; color: #333; }
+        .method-btn.delete { background: #dc3545; color: white; }
+        .method-btn.active { transform: scale(1.05); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .response-section { margin-top: 20px; }
+        .response-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 10px 15px; background: #f8f9fa; border-radius: 8px; }
+        .status-code { font-size: 1.2rem; font-weight: bold; padding: 5px 15px; border-radius: 20px; }
+        .status-code.success { background: #d4edda; color: #155724; }
+        .status-code.error { background: #f8d7da; color: #721c24; }
+        .response-time { font-size: 0.9rem; color: #666; }
+        .response-body { background: #1a1a2e; color: #e0e0e0; padding: 20px; border-radius: 10px; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.9rem; max-height: 400px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; }
+        .response-body.error { color: #ff6b6b; }
+        .history-section { margin-top: 20px; }
+        .history-list { max-height: 200px; overflow-y: auto; }
+        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: background 0.3s ease; }
+        .history-item:hover { background: #e9ecef; }
+        .history-method { font-weight: bold; margin-right: 10px; }
+        .history-url { flex: 1; font-size: 0.9rem; color: #333; }
+        .history-status { font-size: 0.85rem; padding: 3px 8px; border-radius: 10px; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: rgba(255,255,255,0.8); text-decoration: none; font-weight: 600; transition: color 0.3s ease; }
+        .back-link:hover { color: white; }
+        /* 响应式样式 - 适配小屏幕设备 */
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8rem; }
+            .card { padding: 20px; }
+            .btn { width: 100%; margin-bottom: 10px; margin-right: 0; }
+            .method-btns { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 页面头部区域 -->
+        <div class="header">
+            <a href="/" class="back-link">← Back to Poll System</a>
+            <h1>🔧 API Test Tool</h1>
+            <p>Send HTTP requests and view responses</p>
+        </div>
+
+        <!-- 请求配置卡片 -->
+        <div class="card">
+            <div class="card-title">Request Configuration</div>
+            
+            <!-- HTTP方法选择按钮 -->
+            <div class="method-btns">
+                <button class="method-btn get active" onclick="setMethod('GET')">GET</button>
+                <button class="method-btn post" onclick="setMethod('POST')">POST</button>
+                <button class="method-btn put" onclick="setMethod('PUT')">PUT</button>
+                <button class="method-btn delete" onclick="setMethod('DELETE')">DELETE</button>
+            </div>
+            
+            <!-- API端点选择下拉框 -->
+            <div class="input-group">
+                <label>Select API Endpoint:</label>
+                <select id="api-select">
+                    <option value="">-- Choose endpoint --</option>
+                    <optgroup label="Poll Management">
+                        <option value='{"method":"GET","url":"/v3/polls/","body":""}'>GET /v3/polls/ - List all polls</option>
+                        <option value='{"method":"POST","url":"/v3/polls/","body":"{\"question\": \"Your question?\"}"}'>POST /v3/polls/ - Create poll</option>
+                        <option value='{"method":"GET","url":"/v3/polls/1/","body":""}'>GET /v3/polls/{id}/ - Get poll details</option>
+                        <option value='{"method":"PUT","url":"/v3/polls/1/","body":"{\"question\": \"Updated question\"}"}'>PUT /v3/polls/{id}/ - Update poll</option>
+                        <option value='{"method":"DELETE","url":"/v3/polls/1/","body":""}'>DELETE /v3/polls/{id}/ - Delete poll</option>
+                    </optgroup>
+                    <optgroup label="Options Management">
+                        <option value='{"method":"GET","url":"/v3/polls/1/options/","body":""}'>GET /v3/polls/{id}/options/ - Get options</option>
+                        <option value='{"method":"POST","url":"/v3/polls/1/options/","body":"{\"description\": \"New option\"}"}'>POST /v3/polls/{id}/options/ - Add option</option>
+                        <option value='{"method":"GET","url":"/v3/polls/1/options/1/","body":""}'>GET /v3/polls/{id}/options/{opt}/ - Get option</option>
+                        <option value='{"method":"PUT","url":"/v3/polls/1/options/1/","body":"{\"description\": \"Updated option\"}"}'>PUT /v3/polls/{id}/options/{opt}/ - Update option</option>
+                    </optgroup>
+                    <optgroup label="Voting">
+                        <option value='{"method":"PUT","url":"/v3/polls/1/voters/user123/","body":"{\"option_id\": 1}"}'>PUT /v3/polls/{id}/voters/{user}/ - Submit vote</option>
+                        <option value='{"method":"GET","url":"/v3/polls/1/voters/user123/","body":""}'>GET /v3/polls/{id}/voters/{user}/ - Check vote status</option>
+                    </optgroup>
+                    <optgroup label="Results & System">
+                        <option value='{"method":"GET","url":"/v3/polls/1/result/","body":""}'>GET /v3/polls/{id}/result/ - Get results</option>
+                        <option value='{"method":"POST","url":"/v3/reset/","body":"{}"}'>POST /v3/reset/ - Reset database</option>
+                        <option value='{"method":"GET","url":"/v3/","body":""}'>GET /v3/ - List all routes</option>
+                    </optgroup>
+                </select>
+            </div>
+            
+            <!-- 自定义URL输入框 -->
+            <div class="input-group">
+                <label>Request URL:</label>
+                <input type="text" id="url-input" placeholder="/v3/polls/1/result">
+            </div>
+            
+            <!-- 请求体输入区域（仅POST/PUT可见） -->
+            <div id="body-section" style="display: none;">
+                <div class="input-group">
+                    <label>Request Body (JSON):</label>
+                    <textarea id="request-body" placeholder='{"key": "value"}'></textarea>
+                </div>
+            </div>
+            
+            <!-- 操作按钮 -->
+            <button class="btn" onclick="sendRequest()">Send Request</button>
+            <button class="btn btn-secondary" onclick="clearAll()">Clear</button>
+        </div>
+
+        <!-- 响应结果卡片 -->
+        <div class="card">
+            <div class="card-title">Response Result</div>
+            <div class="response-section" id="response-section" style="display: none;">
+                <div class="response-header">
+                    <span class="status-code" id="status-code"></span>
+                    <span class="response-time" id="response-time"></span>
+                </div>
+                <div class="response-body" id="response-body"></div>
+            </div>
+            <div id="no-response" style="text-align: center; color: #888; padding: 40px;">
+                Click "Send Request" to start testing API
+            </div>
+        </div>
+
+        <!-- 请求历史卡片 -->
+        <div class="card">
+            <div class="card-title">Request History</div>
+            <div class="history-section" id="history-section">
+                <div class="history-list" id="history-list">
+                    <p style="text-align: center; color: #888;">No request history</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript脚本 - 处理API测试交互 -->
+    <script>
+        let currentMethod = 'GET';  // 当前HTTP方法
+        let history = [];  // 请求历史数组
+
+        // API端点选择事件监听器
+        document.getElementById('api-select').addEventListener('change', function() {
+            const value = this.value;
+            if (!value) return;
+            try {
+                const data = JSON.parse(value);
+                setMethod(data.method);
+                document.getElementById('url-input').value = data.url;
+                document.getElementById('request-body').value = data.body || '';
+            } catch (e) {
+                console.error('Invalid JSON:', e);
+            }
+        });
+
+        // 设置HTTP方法
+        function setMethod(method) {
+            currentMethod = method;
+            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.method-btn.' + method.toLowerCase()).classList.add('active');
+            // GET和DELETE方法不需要请求体
+            document.getElementById('body-section').style.display = (method === 'GET' || method === 'DELETE') ? 'none' : 'block';
+        }
+
+        // 发送请求
+        async function sendRequest() {
+            const url = document.getElementById('url-input').value.trim();
+            if (!url) { alert('Please enter URL'); return; }
+
+            let body = null;
+            // 处理请求体（仅POST/PUT方法）
+            if (currentMethod !== 'GET' && currentMethod !== 'DELETE') {
+                const bodyText = document.getElementById('request-body').value.trim();
+                if (bodyText) {
+                    try { body = JSON.parse(bodyText); }
+                    catch (e) { alert('Invalid JSON format'); return; }
+                }
+            }
+
+            try {
+                // 记录开始时间
+                const startTime = performance.now();
+                const res = await fetch(url, {
+                    method: currentMethod,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: body ? JSON.stringify(body) : null
+                });
+
+                const responseTime = (Date.now() - startTime).toFixed(2);
+                const text = await res.text();
+                let json;
+                // 尝试解析JSON响应
+                try { json = JSON.parse(text); }
+                catch { json = text; }
+
+                // 显示响应并添加到历史
+                displayResponse(res.status, json, responseTime);
+                addHistory(currentMethod, url, res.status);
+            } catch (e) {
+                displayResponse(0, { error: e.message }, (Date.now() - performance.now()).toFixed(2));
+            }
+        }
+
+        // 显示响应结果
+        function displayResponse(status, data, time) {
+            document.getElementById('no-response').style.display = 'none';
+            document.getElementById('response-section').style.display = 'block';
+            
+            const statusCode = document.getElementById('status-code');
+            statusCode.textContent = status;
+            // 根据状态码设置样式
+            statusCode.className = 'status-code ' + (status >= 200 && status < 300 ? 'success' : 'error');
+            
+            document.getElementById('response-time').textContent = `Response Time: ${time}ms`;
+            const responseBody = document.getElementById('response-body');
+            responseBody.className = 'response-body' + (status >= 400 ? ' error' : '');
+            // 格式化显示JSON数据
+            responseBody.textContent = typeof data === 'object' ? JSON.stringify(data, null, 2) : data;
+        }
+
+        // 添加请求到历史记录
+        function addHistory(method, url, status) {
+            history.unshift({ method, url, status, timestamp: Date.now() });
+            if (history.length > 10) history.pop();  // 只保留最近10条记录
+            renderHistory();
+        }
+
+        // 渲染历史记录列表
+        function renderHistory() {
+            const historyList = document.getElementById('history-list');
+            if (history.length === 0) {
+                historyList.innerHTML = '<p style="text-align: center; color: #888;">No request history</p>';
+                return;
+            }
+            
+            let html = '';
+            history.forEach(item => {
+                // 为不同HTTP方法设置颜色
+                const methodColor = {'GET':'#28a745','POST':'#007bff','PUT':'#ffc107','DELETE':'#dc3545'}[item.method] || '#666';
+                html += `<div class="history-item" onclick="replay('${item.method}', '${item.url}')">
+                    <div>
+                        <span class="history-method" style="color: ${methodColor}">${item.method}</span>
+                        <span class="history-url">${item.url}</span>
+                    </div>
+                    <span class="history-status" style="background: ${item.status >= 200 ? '#d4edda' : '#f8d7da'}; color: ${item.status >= 200 ? '#155724' : '#721c24'};">${item.status}</span>
+                </div>`;
+            });
+            historyList.innerHTML = html;
+        }
+
+        // 重放历史请求
+        function replay(method, url) {
+            setMethod(method);
+            document.getElementById('url-input').value = url;
+            sendRequest();
+        }
+
+        // 清除所有输入和历史
+        function clearAll() {
+            document.getElementById('url-input').value = '';
+            document.getElementById('request-body').value = '';
+            document.getElementById('api-select').value = '';
+            document.getElementById('no-response').style.display = 'block';
+            document.getElementById('response-section').style.display = 'none';
+            history = [];
+            renderHistory();
+        }
+    </script>
+</body>
+</html>

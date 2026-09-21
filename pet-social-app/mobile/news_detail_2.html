@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>新手养狗必学：基础训练技巧 - 宠物健康管理系统</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/jquery.min.js"></script>
+    <style>
+        .comment-item {
+            position: relative;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        .comment-author {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .comment-time {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        .comment-content {
+            color: #333;
+            line-height: 1.5;
+        }
+        .delete-comment {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px 10px;
+            background-color: #ffebee;
+            border-radius: 4px;
+            display: inline-block !important;
+        }
+        .login-prompt {
+            text-align: center;
+            padding: 20px;
+            background-color: #f0f8ff;
+            color: #666;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .no-comments {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+            font-size: 14px;
+        }
+        .error-message {
+            text-align: center;
+            padding: 20px;
+            color: #ff6b6b;
+            background-color: #ffebee;
+            border-radius: 8px;
+        }
+        .comment-input textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            resize: none;
+            box-sizing: border-box;
+        }
+        .comment-input button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .comment-input button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script>
+        // 确保浏览器支持jQuery
+        if (typeof $ === 'undefined') {
+            alert('jQuery库加载失败，评论功能可能无法正常使用');
+        }
+        
+        // 备用存储对象，当localStorage不可用时使用
+        window.memoryStorage = window.memoryStorage || {};
+        
+        // 页面加载完成后执行
+        $(document).ready(function() {
+            console.log('页面加载完成，初始化评论功能...');
+            
+            // 检查localStorage是否可用
+            testLocalStorage();
+            
+            // 返回按钮点击事件
+            $('#backBtn').click(function() {
+                window.location.href = 'news.html';
+            });
+            
+            // 初始化用户信息
+            let user = getUserInfo();
+            console.log('当前用户状态:', user);
+            
+            // 加载已保存的评论
+            loadComments('news2', user);
+            
+            // 提交评论
+            $('#submitComment').click(function() {
+                submitComment('news2');
+            });
+        });
+        
+        // 测试localStorage是否可用
+        function testLocalStorage() {
+            try {
+                const testKey = 'test_localStorage_available';
+                localStorage.setItem(testKey, 'test_value');
+                localStorage.removeItem(testKey);
+                window.localStorageAvailable = true;
+                console.log('localStorage可用');
+            } catch (e) {
+                console.warn('localStorage不可用，将使用内存存储作为备选方案');
+                window.localStorageAvailable = false;
+            }
+        }
+        
+        // 安全的localStorage操作函数
+        function safeLocalStorageGet(key) {
+            try {
+                if (window.localStorageAvailable) {
+                    return localStorage.getItem(key);
+                }
+                return window.memoryStorage[key] || null;
+            } catch (e) {
+                console.error('获取localStorage数据失败:', e);
+                return window.memoryStorage[key] || null;
+            }
+        }
+        
+        function safeLocalStorageSet(key, value) {
+            try {
+                if (window.localStorageAvailable) {
+                    localStorage.setItem(key, value);
+                    return true;
+                }
+                window.memoryStorage[key] = value;
+                return true;
+            } catch (e) {
+                console.error('设置localStorage数据失败:', e);
+                window.memoryStorage[key] = value;
+                return true; // 内存存储总是成功的
+            }
+        }
+        
+        // 获取用户信息，确保返回有效的用户对象
+        function getUserInfo() {
+            try {
+                let user = safeLocalStorageGet('user');
+                if (user) {
+                    try {
+                        user = JSON.parse(user);
+                    } catch (e) {
+                        console.error('解析用户数据失败:', e);
+                        user = null;
+                    }
+                    // 确保必要字段存在
+                    if (typeof user !== 'object' || !user) {
+                        user = { isLogin: false, userId: 'guest', username: '访客' };
+                    } else {
+                        user.isLogin = user.isLogin || false;
+                        user.userId = user.userId || 'guest';
+                        user.username = user.username || '用户';
+                    }
+                } else {
+                    user = { isLogin: false, userId: 'guest', username: '访客' };
+                }
+                return user;
+            } catch (error) {
+                console.error('获取用户信息失败:', error);
+                return { isLogin: false, userId: 'guest', username: '访客' };
+            }
+        }
+        
+        // 提交评论函数
+        function submitComment(newsId) {
+            try {
+                const commentText = $('#commentText').val().trim();
+                
+                if (!commentText) {
+                    alert('请输入评论内容');
+                    return;
+                }
+                
+                // 检查用户是否登录
+                let user = getUserInfo();
+                if (!user.isLogin) {
+                    alert('请先登录');
+                    // 保存当前页面URL以便登录后返回
+                    safeLocalStorageSet('redirectUrl', window.location.href);
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // 创建新评论对象
+                const now = new Date();
+                const time = now.getFullYear() + '-' + 
+                             String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                             String(now.getDate()).padStart(2, '0') + ' ' +
+                             String(now.getHours()).padStart(2, '0') + ':' +
+                             String(now.getMinutes()).padStart(2, '0') + ':' +
+                             String(now.getSeconds()).padStart(2, '0');
+                
+                const newComment = {
+                    id: 'comment_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+                    author: user.username,
+                    userId: user.userId,
+                    content: commentText,
+                    time: time
+                };
+                
+                console.log('准备保存评论:', newComment);
+                
+                // 保存评论
+                if (saveComment(newsId, newComment)) {
+                    // 强制刷新评论列表
+                    const commentsList = $('#commentsList');
+                    commentsList.empty();
+                    
+                    // 添加新评论到UI
+                    addCommentToUI(newComment, user);
+                    
+                    // 清空输入框
+                    $('#commentText').val('');
+                    
+                    alert('评论提交成功');
+                } else {
+                    alert('评论保存失败，请稍后再试');
+                }
+            } catch (error) {
+                console.error('提交评论时发生错误:', error);
+                alert('提交评论时发生错误，请稍后再试');
+            }
+        }
+        
+        // 保存评论
+        function saveComment(newsId, comment) {
+            try {
+                const commentsKey = 'comments_' + newsId;
+                let existingComments = [];
+                
+                // 安全地获取现有评论
+                const storedComments = safeLocalStorageGet(commentsKey);
+                if (storedComments) {
+                    try {
+                        existingComments = JSON.parse(storedComments);
+                        if (!Array.isArray(existingComments)) {
+                            existingComments = [];
+                        }
+                    } catch (e) {
+                        console.error('解析评论数据失败:', e);
+                        existingComments = [];
+                    }
+                }
+                
+                // 添加新评论到数组开头
+                existingComments.unshift(comment);
+                
+                // 保存回存储
+                const result = safeLocalStorageSet(commentsKey, JSON.stringify(existingComments));
+                console.log('评论保存成功，当前评论数量:', existingComments.length);
+                return result;
+            } catch (error) {
+                console.error('保存评论失败:', error);
+                return false;
+            }
+        }
+        
+        // 从存储加载评论
+        function loadComments(newsId, currentUser) {
+            try {
+                console.log('加载评论，新闻ID:', newsId, '当前用户:', currentUser);
+                const commentsKey = 'comments_' + newsId;
+                let comments = [];
+                
+                // 安全地获取评论数据
+                const storedComments = safeLocalStorageGet(commentsKey);
+                if (storedComments) {
+                    try {
+                        comments = JSON.parse(storedComments);
+                        if (!Array.isArray(comments)) {
+                            comments = [];
+                        }
+                    } catch (e) {
+                        console.error('解析评论数据失败:', e);
+                        comments = [];
+                    }
+                }
+                
+                const commentsList = $('#commentsList');
+                commentsList.empty();
+                
+                // 如果没有评论，显示提示
+                if (comments.length === 0) {
+                    commentsList.append('<div class="no-comments">暂无评论，快来发表第一条评论吧！</div>');
+                    return;
+                }
+                
+                // 添加每条评论到UI
+                comments.forEach(comment => {
+                    if (comment && comment.id && comment.author && comment.time && comment.content) {
+                        addCommentToUI(comment, currentUser);
+                    }
+                });
+            } catch (error) {
+                console.error('加载评论失败:', error);
+                $('#commentsList').html('<div class="error-message">加载评论失败，我们将使用备用功能</div>');
+                
+                // 尝试使用直接操作DOM的方式
+                setTimeout(() => {
+                    tryDirectDOMOperation();
+                }, 1000);
+            }
+        }
+        
+        // 直接操作DOM作为备用方案
+        function tryDirectDOMOperation() {
+            try {
+                const commentsList = document.getElementById('commentsList');
+                if (commentsList) {
+                    commentsList.innerHTML = '<div class="no-comments">评论功能已切换到备用模式</div>';
+                }
+            } catch (e) {
+                console.error('备用DOM操作失败:', e);
+            }
+        }
+        
+
+        
+        // 从存储删除评论
+        function deleteComment(newsId, commentId) {
+            try {
+                const commentsKey = 'comments_' + newsId;
+                let comments = [];
+                
+                // 安全地获取现有评论
+                const storedComments = safeLocalStorageGet(commentsKey);
+                if (storedComments) {
+                    try {
+                        comments = JSON.parse(storedComments);
+                        if (!Array.isArray(comments)) {
+                            comments = [];
+                        }
+                    } catch (e) {
+                        console.error('解析评论数据失败:', e);
+                        comments = [];
+                    }
+                }
+                
+                console.log('删除前评论数量:', comments.length);
+                console.log('尝试删除评论ID:', commentId);
+                
+                // 过滤掉要删除的评论
+                const filteredComments = comments.filter(comment => comment && comment.id !== commentId);
+                
+                console.log('删除后评论数量:', filteredComments.length);
+                
+                // 保存回存储 - 使用更强力的方式确保数据更新
+                if (window.localStorageAvailable) {
+                    localStorage.removeItem(commentsKey);
+                    localStorage.setItem(commentsKey, JSON.stringify(filteredComments));
+                } else {
+                    window.memoryStorage[commentsKey] = JSON.stringify(filteredComments);
+                }
+                
+                // 验证存储是否成功更新
+                const verifyComments = safeLocalStorageGet(commentsKey);
+                let verifyData = [];
+                if (verifyComments) {
+                    verifyData = JSON.parse(verifyComments);
+                }
+                console.log('验证后评论数量:', verifyData.length);
+                
+                return true;
+            } catch (error) {
+                console.error('删除评论失败:', error);
+                return false;
+            }
+        }
+        
+        // 合并删除处理逻辑，使用单一函数处理两种情况
+        function handleCommentDelete(commentId) {
+            console.log('处理评论删除:', commentId);
+            
+            if (confirm('确定要删除这条评论吗？')) {
+                // 先从DOM中移除评论（立即反馈）
+                let commentItem = null;
+                
+                // 尝试jQuery方式
+                if (typeof $ !== 'undefined') {
+                    commentItem = $('.comment-item[data-comment-id="' + commentId + '"]');
+                    if (commentItem.length > 0) {
+                        commentItem.remove();
+                        console.log('jQuery方式移除DOM元素');
+                    }
+                }
+                
+                // 如果jQuery失败，尝试原生DOM方式
+                if (!commentItem || (typeof commentItem.length !== 'undefined' && commentItem.length === 0)) {
+                    commentItem = document.querySelector('.comment-item[data-comment-id="' + commentId + '"]');
+                    if (commentItem) {
+                        commentItem.remove();
+                        console.log('原生方式移除DOM元素');
+                    }
+                }
+                
+                // 从存储中删除
+                const storedSuccess = deleteComment('news2', commentId);
+                console.log('存储删除结果:', storedSuccess);
+                
+                // 检查是否还有评论
+                let hasComments = false;
+                if (typeof $ !== 'undefined') {
+                    hasComments = $('#commentsList').find('.comment-item').length > 0;
+                } else {
+                    const commentItems = document.querySelectorAll('.comments-list .comment-item');
+                    hasComments = commentItems.length > 0;
+                }
+                
+                if (!hasComments) {
+                    if (typeof $ !== 'undefined') {
+                        $('#commentsList').html('<div class="no-comments">暂无评论，快来发表第一条评论吧！</div>');
+                    } else {
+                        const commentsList = document.getElementById('commentsList');
+                        if (commentsList) {
+                            commentsList.innerHTML = '<div class="no-comments">暂无评论，快来发表第一条评论吧！</div>';
+                        }
+                    }
+                }
+                
+                alert('评论已删除');
+            }
+        }
+        
+        // 为删除按钮绑定事件 - 使用事件委托确保动态添加的元素也能响应
+        $(document).on('click', '.delete-comment', function() {
+            try {
+                console.log('点击了删除按钮(jQuery)');
+                const commentId = $(this).attr('data-comment-id');
+                
+                if (!commentId) {
+                    alert('删除失败：无法识别评论');
+                    return;
+                }
+                
+                handleCommentDelete(commentId);
+            } catch (error) {
+                console.error('删除评论点击事件处理失败:', error);
+                alert('处理删除操作时发生错误');
+            }
+        });
+        
+        // 添加评论到UI
+        function addCommentToUI(comment, currentUser) {
+            try {
+                console.log('添加评论到UI:', comment.id, '用户ID匹配:', currentUser.isLogin && comment.userId && currentUser.userId === comment.userId);
+                const commentsList = $('#commentsList');
+                
+                // 检查是否可以删除
+                const showDeleteButton = currentUser.isLogin && comment.userId && currentUser.userId === comment.userId;
+                
+                // 创建评论元素
+                const commentItem = $('<div class="comment-item"></div>')
+                    .attr('data-comment-id', comment.id)
+                    .append($('<div class="comment-author"></div>').text(comment.author))
+                    .append($('<div class="comment-time"></div>').text(comment.time))
+                    .append($('<div class="comment-content"></div>').text(comment.content));
+                
+                // 添加删除按钮
+                if (showDeleteButton) {
+                    const deleteBtn = $('<div class="delete-comment">删除</div>')
+                        .attr('data-comment-id', comment.id);
+                    commentItem.append(deleteBtn);
+                }
+                
+                // 移除"暂无评论"提示
+                commentsList.find('.no-comments').remove();
+                commentsList.find('.error-message').remove();
+                
+                // 添加到列表
+                commentsList.prepend(commentItem);
+            } catch (error) {
+                console.error('添加评论到UI失败:', error);
+                // 尝试使用原生DOM操作作为备用
+                try {
+                    const commentsList = document.getElementById('commentsList');
+                    if (commentsList) {
+                        const div = document.createElement('div');
+                        div.className = 'comment-item';
+                        div.dataset.commentId = comment.id;
+                        
+                        const authorDiv = document.createElement('div');
+                        authorDiv.className = 'comment-author';
+                        authorDiv.textContent = comment.author;
+                        
+                        const timeDiv = document.createElement('div');
+                        timeDiv.className = 'comment-time';
+                        timeDiv.textContent = comment.time;
+                        
+                        const contentDiv = document.createElement('div');
+                        contentDiv.className = 'comment-content';
+                        contentDiv.textContent = comment.content;
+                        
+                        div.appendChild(authorDiv);
+                        div.appendChild(timeDiv);
+                        div.appendChild(contentDiv);
+                        
+                        // 添加删除按钮
+                        if (currentUser.isLogin && comment.userId && currentUser.userId === comment.userId) {
+                            const deleteBtn = document.createElement('div');
+                            deleteBtn.className = 'delete-comment';
+                            deleteBtn.dataset.commentId = comment.id;
+                            deleteBtn.textContent = '删除';
+                            deleteBtn.onclick = function() {
+                                console.log('点击了删除按钮(原生)');
+                                handleCommentDelete(comment.id);
+                            };
+                            div.appendChild(deleteBtn);
+                        }
+                        
+                        commentsList.insertBefore(div, commentsList.firstChild);
+                    }
+                } catch (e) {
+                    console.error('备用DOM添加评论失败:', e);
+                }
+            }
+        }

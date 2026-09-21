@@ -1,0 +1,1140 @@
+/* 全局样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+    padding-top: 66px;
+    padding-bottom: 80px;
+}
+
+/* 导航栏 */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #4CAF50;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.current-time {
+    font-size: 12px;
+    color: white;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    flex: 1;
+}
+
+.user-avatar img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid white;
+    display: block;
+    cursor: pointer;
+}
+
+/* 页面标题栏 */
+.page-header {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #4CAF50;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.back-btn {
+    margin-right: 20px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.back-btn img {
+    width: 24px;
+    height: 24px;
+}
+
+.page-title {
+    font-size: 18px;
+    font-weight: bold;
+    flex: 1;
+    text-align: center;
+}
+
+/* 轮播图 */
+.carousel {
+    position: relative;
+    width: 100%;
+    height: auto;
+    max-height: 280px;
+    overflow: hidden;
+}
+
+.carousel-inner {
+    display: flex;
+    transition: transform 0.5s ease;
+    width: 300%;
+    height: 100%;
+}
+
+.carousel-item {
+    width: 33.333%;
+    height: 100%;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-height: 280px;
+    object-fit: contain;
+}
+
+.carousel-indicators {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+}
+
+.indicator.active {
+    background-color: white;
+}
+
+/* 功能模块 */
+.feature-modules {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px 0;
+    background-color: white;
+    margin-bottom: 10px;
+}
+
+.module-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 25%;
+}
+
+.module-item img {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 8px;
+}
+
+.module-item span {
+    font-size: 14px;
+    color: #666;
+}
+
+/* 通用区域标题 */
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: white;
+    border-bottom: 1px solid #eee;
+}
+
+.section-title h3 {
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.section-title .more {
+    color: #999;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* 宠物资讯 */
+.news-section {
+    background-color: white;
+    margin-bottom: 10px;
+}
+
+.news-list {
+    padding: 0 20px 15px;
+}
+
+.news-item {
+    display: flex;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.news-item:last-child {
+    border-bottom: none;
+}
+
+.news-item img {
+    width: 100px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 15px;
+}
+
+.news-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.news-content h4 {
+    font-size: 16px;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.news-content p {
+    font-size: 14px;
+    color: #999;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.news-time {
+    font-size: 12px;
+    color: #ccc;
+}
+
+/* 商城搜索 */
+.search-container {
+    padding: 15px;
+    background-color: white;
+    position: fixed;
+    top: 66px;
+    left: 0;
+    right: 0;
+    z-index: 999;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    padding: 8px 15px;
+}
+
+.search-bar input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+.search-bar button {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+}
+
+/* 分类标签 */
+.category-tabs {
+    display: flex;
+    padding: 10px 15px;
+    background-color: white;
+    position: fixed;
+    top: 126px;
+    left: 0;
+    right: 0;
+    z-index: 998;
+    border-bottom: 1px solid #eee;
+    overflow-x: auto;
+}
+
+.category-tab {
+    padding: 6px 15px;
+    margin-right: 10px;
+    border-radius: 15px;
+    background-color: #f0f0f0;
+    color: #666;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.category-tab.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* 商品列表区域 */
+#product-list {
+    margin-top: 180px;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.product-item {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.product-image {
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-info {
+    padding: 10px;
+}
+
+.product-name {
+    font-size: 14px;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.product-price {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.current-price {
+    color: #ff4400;
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.original-price {
+    color: #999;
+    font-size: 12px;
+    text-decoration: line-through;
+}
+
+.product-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #999;
+}
+
+/* 商品详情弹窗 */
+#product-detail {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    overflow-y: auto;
+}
+
+#product-detail .modal-content {
+    background-color: white;
+    border-radius: 8px 8px 0 0;
+    width: 100%;
+    max-width: none;
+    margin-top: auto;
+}
+
+.detail-image {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
+
+.detail-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.detail-info {
+    padding: 20px;
+}
+
+.detail-info h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.price-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.meta-section {
+    margin-bottom: 20px;
+}
+
+.meta-section p {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #666;
+}
+
+.description {
+    margin-bottom: 20px;
+}
+
+.description h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.description p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #666;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.action-buttons button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.add-to-cart {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.close-detail {
+    background-color: #f0f0f0;
+    color: #666;
+}
+
+/* 添加成功提示 */
+#add-success {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 4px;
+    z-index: 2100;
+}
+
+.add-to-cart {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* 底部导航栏 */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    background-color: white;
+    border-top: 1px solid #eee;
+    z-index: 1000;
+}
+
+.bottom-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #666;
+    text-decoration: none;
+}
+
+.bottom-nav img {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.bottom-nav a.active {
+    color: #4CAF50;
+}
+
+.bottom-nav span {
+    font-size: 12px
+}
+
+/* 弹窗样式 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    background-color: white;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* 表单行样式 */
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.form-row .form-group {
+    margin-bottom: 0;
+}
+
+.col-6 {
+    flex: 1;
+    width: 50%;
+}
+
+/* 卡片样式 */
+.section-card {
+    background-color: white;
+    border-radius: 12px;
+    margin: 15px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.section-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.card-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* 预约按钮样式 */
+.reservation-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.reservation-btn:hover {
+    background-color: #45a049;
+}
+
+.reservation-btn:active {
+    transform: scale(0.98);
+}
+
+/* 预约容器样式 */
+.reservation-container {
+    margin-bottom: 10px;
+}
+
+/* 预约列表样式优化 */
+.my-reservations {
+    margin-bottom: 20px;
+}
+
+.reservation-list {
+    min-height: 100px;
+}
+
+.no-reservations {
+    text-align: center;
+    color: #999;
+    padding: 40px 20px;
+    font-size: 14px;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.login-footer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.login-footer a {
+    color: #4CAF50;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* 用户中心样式 */
+.user-info-section {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background-color: white;
+    margin-bottom: 10px;
+}
+
+.current-time {
+    font-size: 14px;
+    color: #666;
+    margin-right: 15px;
+    text-align: center;
+}
+
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 20px;
+    border: 3px solid #f0f0f0;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-details h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.user-details p {
+    font-size: 14px;
+    color: #999;
+}
+
+.function-list {
+    background-color: white;
+    margin-bottom: 20px;
+}
+
+.function-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.function-item:last-child {
+    border-bottom: none;
+}
+
+.function-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 15px;
+}
+
+.function-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.function-text {
+    flex: 1;
+    font-size: 16px;
+}
+
+.function-arrow {
+    color: #999;
+}
+
+.function-arrow img {
+    width: 16px;
+    height: 16px;
+}
+
+.logout-section {
+    padding: 0 20px;
+}
+
+.logout-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* 成功提示样式 */
+.success-content {
+    text-align: center;
+}
+
+.success-content .modal-body {
+    padding: 30px 20px;
+}
+
+#successMessage {
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+/* 资讯详情样式 */
+.news-detail-content {
+    max-width: 90%;
+    height: 80%;
+    overflow-y: auto;
+}
+
+.news-detail-body {
+    padding: 20px;
+}
+
+.detail-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.detail-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.detail-footer {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    color: #999;
+    font-size: 14px;
+}
+
+/* 评论区样式 */
+.comments-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.comments-section h4 {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.comment-input {
+    margin-bottom: 20px;
+}
+
+.comment-input textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    resize: none;
+    height: 80px;
+    margin-bottom: 10px;
+}
+
+.comment-input button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.comments-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.comment-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.comment-author {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.comment-time {
+    color: #999;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.comment-content {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.no-comments {
+    text-align: center;
+    color: #999;
+    padding: 20px;
+}
+
+/* 预约页面样式 */
+.reservation-form {
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 10px;
+}
+
+.reservation-form h3 {
+    margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+#my-reservations {
+    background-color: white;
+    padding: 20px;
+}
+
+#my-reservations h3 {
+    margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.reservation-item {
+    padding: 18px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease;
+}
+
+.reservation-item:last-child {
+    border-bottom: none;
+}
+
+.reservation-item:hover {
+    background-color: #fafafa;
+}
+
+.reservation-info {
+    margin-bottom: 10px;
+}
+
+.reservation-pet {
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.reservation-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.reservation-status {
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.reservation-status.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.reservation-status.status-confirmed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.reservation-status.status-completed {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.reservation-status.status-canceled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+.status-pending {
+    background-color: #FFF3CD;
+    color: #856404;
+}
+
+.status-confirmed {
+    background-color: #D4EDDA;
+    color: #155724;
+}
+
+.status-completed {
+    background-color: #CCE5FF;
+    color: #004085;
+}
+
+.status-canceled {
+    background-color: #F8D7DA;
+    color: #721C24;
+}
+
+.cancel-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* 反馈页面样式 */
+.feedback-form {
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 10px;
+}
+
+.feedback-form h3 {
+    margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+#my-feedbacks {
+    background-color: white;
+    padding: 20px;
+}
+
+#my-feedbacks h3 {
+    margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.feedback-item {
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.feedback-item:last-child {
+    border-bottom: none;
+}
+
+.feedback-type {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.feedback-content {
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.feedback-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #666;
+}
+
+.feedback-status {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+.status-processing {
+    background-color: #FFF3CD;
+    color: #856404;
+}
+
+.status-resolved {
+    background-color: #D4EDDA;
+    color: #155724;
+}

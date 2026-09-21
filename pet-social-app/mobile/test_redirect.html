@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跳转测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>跳转测试页面</h1>
+    <button onclick="testRedirect()">测试跳转到用户中心</button>
+    <button onclick="testLocalStorage()">测试LocalStorage</button>
+    <div id="result"></div>
+
+    <script>
+        function testRedirect() {
+            console.log('测试跳转开始');
+            document.getElementById('result').textContent = '准备跳转...';
+            // 使用不同的跳转方式测试
+            setTimeout(function() {
+                console.log('执行跳转');
+                window.location.href = 'user_center.html';
+            }, 500);
+        }
+
+        function testLocalStorage() {
+            try {
+                localStorage.setItem('testKey', 'testValue');
+                const value = localStorage.getItem('testKey');
+                document.getElementById('result').textContent = 'LocalStorage测试成功: ' + value;
+                console.log('LocalStorage测试成功:', value);
+            } catch (e) {
+                document.getElementById('result').textContent = 'LocalStorage测试失败: ' + e.message;
+                console.log('LocalStorage测试失败:', e);
+            }
+        }
+
+        // 页面加载时自动测试
+        window.onload = function() {
+            console.log('测试页面加载完成');
+            document.getElementById('result').textContent = '页面已加载，点击按钮进行测试';
+        };
+    </script>
+</body>
+</html>

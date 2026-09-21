@@ -1,0 +1,69 @@
+# 定义Docker Compose服务
+services:
+  # Redis数据库服务
+  redis:
+    image: redis:7-alpine  # 使用Redis 7 Alpine版本镜像
+    container_name: redis  # 容器名称
+    ports:
+      - "6379:6379"  # 端口映射：主机6379端口 -> 容器6379端口
+    volumes:
+      - redis_data:/data  # 数据卷挂载，持久化Redis数据
+    networks:
+      - app-network  # 加入应用网络
+
+  # 第一个投票服务实例
+  poll:
+    image: poll-service  # 使用自定义的poll-service镜像
+    container_name: poll  # 容器名称
+    environment:
+      - REDIS_HOST=redis  # 设置Redis主机地址为容器名
+    depends_on:
+      - redis  # 依赖Redis服务，先启动Redis
+    networks:
+      - app-network  # 加入应用网络
+
+  # 第二个投票服务实例
+  poll-2:
+    image: poll-service  # 使用相同的poll-service镜像
+    container_name: poll-2  # 容器名称
+    environment:
+      - REDIS_HOST=redis  # 设置Redis主机地址为容器名
+    depends_on:
+      - redis  # 依赖Redis服务
+    networks:
+      - app-network  # 加入应用网络
+
+  # 第三个投票服务实例
+  poll-3:
+    image: poll-service  # 使用相同的poll-service镜像
+    container_name: poll-3  # 容器名称
+    environment:
+      - REDIS_HOST=redis  # 设置Redis主机地址为容器名
+    depends_on:
+      - redis  # 依赖Redis服务
+    networks:
+      - app-network  # 加入应用网络
+
+  # Nginx反向代理和负载均衡服务
+  nginx:
+    image: nginx:latest  # 使用最新版Nginx镜像
+    container_name: nginx  # 容器名称
+    ports:
+      - "80:80"  # 端口映射：主机80端口 -> 容器80端口
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf  # 挂载自定义配置文件
+    depends_on:
+      - poll  # 依赖投票服务实例
+      - poll-2
+      - poll-3
+    networks:
+      - app-network  # 加入应用网络
+
+# 定义数据卷
+volumes:
+  redis_data:  # Redis数据持久化卷
+
+# 定义网络
+networks:
+  app-network:  # 应用网络
+    driver: bridge  # 使用桥接网络驱动

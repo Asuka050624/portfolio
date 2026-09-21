@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>图片测试</title>
+</head>
+<body>
+    <h1>图片加载测试</h1>
+    
+    <h2>导航栏返回按钮测试</h2>
+    <div class="back-btn" style="width: 40px; height: 40px; background-color: #4CAF50; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer;" id="testBackBtn">
+        <img src="images/back.png" alt="返回" style="width: 24px; height: 24px;">
+    </div>
+    
+    <h2>测试图片列表</h2>
+    <div>
+        <p>back.png</p>
+        <img src="images/back.png" alt="back" style="width: 100px;">
+    </div>
+    
+    <div>
+        <p>user.png</p>
+        <img src="images/user.png" alt="user" style="width: 100px;">
+    </div>
+    
+    <div>
+        <p>news.png</p>
+        <img src="images/news.png" alt="news" style="width: 100px;">
+    </div>
+    
+    <div>
+        <p>product1.jpg</p>
+        <img src="images/product1.jpg" alt="product1" style="width: 100px;">
+    </div>
+    
+    <div>
+        <p>carousel1.png</p>
+        <img src="images/carousel1.png" alt="carousel1" style="width: 200px;">
+    </div>
+    
+    <script src="js/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // 测试返回按钮功能
+            $('#testBackBtn').on('click', function() {
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+</body>
+</html>

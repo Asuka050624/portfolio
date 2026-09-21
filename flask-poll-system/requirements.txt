@@ -1,0 +1,8 @@
+# Flask Web框架 - 用于创建Web应用
+flask
+# Flask-RESTful - 用于快速构建RESTful API
+flask-restful
+# Redis - Redis客户端库，用于连接Redis数据库
+redis
+# Requests - HTTP请求库，用于发送HTTP请求
+requests

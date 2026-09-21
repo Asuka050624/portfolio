@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>用户登录 - 宠物健康管理系统</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .back-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+        .back-btn img {
+            width: 24px;
+            height: 24px;
+        }
+        .page-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .placeholder {
+            width: 34px;
+        }
+        .login-container {
+            padding: 20px;
+            max-width: 400px;
+            margin: 20px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .login-btn:hover {
+            background-color: #45a049;
+        }
+        .login-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .login-footer a {
+            color: #2196F3;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 页面标题栏 -->
+    <div class="page-header">
+        <button class="back-btn" id="backBtn">
+            <img src="images/back.png" alt="返回">
+        </button>
+        <h1 class="page-title">用户登录</h1>
+        <div class="placeholder"></div>
+    </div>
+
+    <!-- 登录表单 -->
+    <div class="login-container">
+        <div class="form-group">
+            <label for="username">用户名</label>
+            <input type="text" id="username" placeholder="请输入用户名">
+        </div>
+        <div class="form-group">
+            <label for="password">密码</label>
+            <input type="password" id="password" placeholder="请输入密码">
+        </div>
+        <button id="loginBtn" class="login-btn">登录</button>
+        <div class="login-footer">
+            <a href="register.html">注册账号</a>
+            <a href="#">忘记密码</a>
+        </div>
+    </div>
+
+    <script>
+        // 最简单的登录脚本
+        window.onload = function() {
+            // 返回按钮
+            document.getElementById('backBtn').onclick = function() {
+                history.back();
+            };
+            
+            // 登录按钮 - 使用最简单直接的实现
+            document.getElementById('loginBtn').onclick = function() {
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value.trim();
+                
+                if (username && password) {
+                    // 测试账号验证
+                    if (username === 'user' && password === '123456') {
+                        // 保存登录状态
+                        localStorage.isLoggedIn = 'true';
+                        localStorage.username = username;
+                        
+                        // 直接跳转
+                        window.location.href = 'user_center.html';
+                    } else {
+                        alert('用户名或密码错误');
+                    }
+                } else {
+                    alert('请输入用户名和密码');
+                }
+            };
+            
+            // 回车键支持
+            document.getElementById('password').onkeypress = function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('loginBtn').click();
+                }
+            };
+        };
+    </script>
+</body>
+</html>

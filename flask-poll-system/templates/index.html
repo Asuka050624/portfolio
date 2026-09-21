@@ -1,0 +1,542 @@
+<!-- 投票系统首页 - HTML5文档 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poll System</title>
+    <!-- 内联CSS样式，定义页面外观 -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 30px; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header p { font-size: 1.1rem; opacity: 0.9; }
+        .card { background: white; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 30px; margin-bottom: 25px; }
+        .card-title { font-size: 1.5rem; color: #333; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #eee; }
+        .poll-item { padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent; }
+        .poll-item:hover { background: #e9ecef; border-color: #667eea; }
+        .poll-item.active { background: #e8f4fd; border-color: #3498db; }
+        .poll-item h3 { margin-bottom: 5px; color: #2c3e50; }
+        .poll-item p { color: #666; font-size: 0.9rem; }
+        .poll-card { background: #fafafa; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 2px solid #eee; }
+        .poll-question { font-size: 1.2rem; color: #2c3e50; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; font-weight: 600; }
+        .poll-options { list-style: none; }
+        .poll-option { background: #fff; border-radius: 10px; padding: 15px 20px; margin-bottom: 10px; cursor: pointer; transition: all 0.3s ease; border: 2px solid #ddd; }
+        .poll-option:hover { background: #e9ecef; border-color: #667eea; }
+        .poll-option.selected { background: #e8f4fd; border-color: #3498db; }
+        .option-description { font-size: 1.1rem; color: #333; }
+        .vote-count { font-size: 0.9rem; color: #666; background: #fff; padding: 5px 12px; border-radius: 20px; border: 1px solid #ddd; }
+        .progress-bar { height: 8px; background: #eee; border-radius: 4px; margin-top: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 4px; transition: width 0.5s ease; }
+        .percentage { font-size: 0.85rem; color: #888; margin-top: 5px; text-align: right; }
+        .btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 30px; border-radius: 30px; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; margin-right: 15px; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
+        .btn-secondary { background: #6c757d; }
+        .btn-secondary:hover { box-shadow: 0 5px 20px rgba(108, 117, 125, 0.4); }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+        .input-group input, .input-group textarea { width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 10px; font-size: 1rem; transition: border-color 0.3s ease; }
+        .input-group input:focus, .input-group textarea:focus { outline: none; border-color: #667eea; }
+        .voter-id-input { max-width: 350px; }
+        .message { padding: 15px 20px; border-radius: 10px; margin-bottom: 20px; font-weight: 500; }
+        .message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .message.info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .stats { display: flex; gap: 20px; margin-top: 20px; }
+        .stat-item { background: #f8f9fa; padding: 15px 25px; border-radius: 10px; text-align: center; flex: 1; }
+        .stat-value { font-size: 2rem; font-weight: bold; color: #667eea; }
+        .stat-label { font-size: 0.9rem; color: #666; margin-top: 5px; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab { padding: 10px 20px; border: none; background: #f8f9fa; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; }
+        .tab.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .empty-state { text-align: center; color: #888; padding: 40px; }
+        .history-chart-container { display: flex; gap: 20px; align-items: flex-start; }
+        .history-chart { flex: 1; min-width: 250px; }
+        .history-list { flex: 1; max-height: 300px; overflow-y: auto; }
+        .history-item { padding: 10px 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .history-item .time { font-size: 0.85rem; color: #888; }
+        .history-item .action { color: #333; }
+        .result-card { background: #fafafa; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .pie-chart-container { display: flex; justify-content: center; margin-bottom: 20px; }
+        .pie-legend { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.9rem; }
+        .legend-color { width: 15px; height: 15px; border-radius: 3px; }
+        /* 响应式样式 - 适配小屏幕设备 */
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8rem; }
+            .card { padding: 20px; }
+            .stats { flex-direction: column; }
+            .btn { width: 100%; margin-bottom: 10px; margin-right: 0; }
+            .voter-id-input { max-width: 100%; }
+            .history-chart-container { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 页面头部区域 -->
+        <div class="header">
+            <h1>Poll System</h1>
+            <p>Participate in polls and express your opinion</p>
+            <!-- 跳转到API测试工具的链接 -->
+            <a href="/api-test" target="_blank" style="display: inline-block; background: rgba(255,255,255,0.2); color: white; padding: 10px 20px; border-radius: 25px; text-decoration: none; font-weight: 600; margin-top: 15px;">API Test Tool</a>
+        </div>
+
+        <!-- 主内容卡片 -->
+        <div class="card">
+            <!-- 标签页导航 -->
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('vote')">Vote</button>
+                <button class="tab" onclick="showTab('results')">Results</button>
+                <button class="tab" onclick="showTab('create')">Create Poll</button>
+                <button class="tab" onclick="showTab('history')">History</button>
+            </div>
+
+            <!-- 投票标签页内容 -->
+            <div id="vote" class="tab-content active">
+                <h2 class="card-title">Vote</h2>
+                
+                <!-- 投票者ID输入框 -->
+                <div class="input-group voter-id-input" style="margin-bottom: 25px;">
+                    <label for="voter-id">Your Voter ID (prevents duplicate voting):</label>
+                    <input type="text" id="voter-id" placeholder="Enter your unique identifier">
+                </div>
+
+                <!-- 投票列表容器 -->
+                <div class="select-poll-label" style="font-weight: 600; color: #333; margin-bottom: 10px;">Select a Poll:</div>
+                <div id="poll-list" class="poll-list"></div>
+                <div id="poll-container" style="margin-top: 20px;"></div>
+
+                <!-- 投票按钮区域 -->
+                <div id="vote-form" style="margin-top: 20px;"></div>
+            </div>
+
+            <!-- 结果标签页内容 -->
+            <div id="results" class="tab-content">
+                <h2 class="card-title">Vote Results</h2>
+                <div class="select-poll-label" style="font-weight: 600; color: #333; margin-bottom: 10px;">Select a Poll to View Results:</div>
+                <div id="results-poll-list" class="poll-list"></div>
+                <div id="results-container" style="margin-top: 20px;"></div>
+            </div>
+
+            <!-- 创建投票标签页内容 -->
+            <div id="create" class="tab-content">
+                <h2 class="card-title">Create New Poll</h2>
+                <div class="input-group">
+                    <label for="new-question">Poll Question:</label>
+                    <input type="text" id="new-question" placeholder="Enter poll question">
+                </div>
+                <div class="input-group">
+                    <label for="new-options">Options (one per line):</label>
+                    <textarea id="new-options" rows="4" placeholder="Option 1&#10;Option 2&#10;Option 3"></textarea>
+                </div>
+                <button class="btn" onclick="createPoll()">Create Poll</button>
+            </div>
+
+            <!-- 历史记录标签页内容 -->
+            <div id="history" class="tab-content">
+                <h2 class="card-title">Vote History</h2>
+                <div id="history-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript脚本 - 处理页面交互和API调用 -->
+    <script>
+        const API_BASE = '/v3';  // API基础路径
+        let selectedOptions = {};  // 存储每个poll选择的选项 {pollId: optionId}
+        let voteHistory = [];  // 投票历史记录数组
+
+        // 颜色数组，用于饼图
+        const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#fa709a'];
+
+        // 切换标签页函数
+        function showTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelector(`.tab[onclick="showTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+            
+            // 根据标签页加载相应内容
+            if (tabId === 'vote') loadPolls();
+            if (tabId === 'results') loadResultsPolls();
+            if (tabId === 'history') loadVoteHistory();
+        }
+
+        // 加载所有投票
+        async function loadPolls() {
+            try {
+                const response = await fetch(`${API_BASE}/polls/`);
+                const data = await response.json();
+
+                if (data.polls.length === 0) {
+                    document.getElementById('poll-list').innerHTML = '<p class="message info">No polls available. Please create one first.</p>';
+                    return;
+                }
+
+                let html = '';
+                // 遍历每个投票，获取详细信息和选项
+                for (const pollId of data.polls) {
+                    const pollResponse = await fetch(`${API_BASE}/polls/${pollId}/`);
+                    const pollData = await pollResponse.json();
+                    const optionsResponse = await fetch(`${API_BASE}/polls/${pollId}/options/`);
+                    const optionsData = await optionsResponse.json();
+
+                    let optionsHtml = '';
+                    // 遍历每个选项
+                    for (const optionId of optionsData.options) {
+                        const optionResponse = await fetch(`${API_BASE}/polls/${pollId}/options/${optionId}/`);
+                        const optionData = await optionResponse.json();
+                        const isSelected = selectedOptions[pollId] === optionId;
+                        optionsHtml += `<div class="poll-option ${isSelected ? 'selected' : ''}" onclick="selectOption(${pollId}, ${optionId}, event)" id="poll${pollId}-option${optionId}">
+                            <span class="option-description">${optionData.description}</span>
+                        </div>`;
+                    }
+
+                    html += `
+                        <div class="poll-card">
+                            <div class="poll-question">${pollData.question}</div>
+                            <div class="poll-options">${optionsHtml}</div>
+                        </div>
+                    `;
+                }
+                document.getElementById('poll-list').innerHTML = html;
+
+                // 添加投票按钮
+                document.getElementById('vote-form').innerHTML = `
+                    <button class="btn" onclick="submitAllVotes()">Submit All Votes</button>
+                    <button class="btn btn-secondary" onclick="clearAllSelections()">Clear All</button>
+                `;
+            } catch (error) {
+                document.getElementById('poll-list').innerHTML = '<p class="message error">Failed to load polls: ' + error.message + '</p>';
+            }
+        }
+
+        // 选择选项
+        function selectOption(pollId, optionId, event) {
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            selectedOptions[pollId] = optionId;
+            loadPolls();  // 重新渲染以更新选中状态
+        }
+
+        // 清除所有选择
+        function clearAllSelections() {
+            selectedOptions = {};
+            loadPolls();
+        }
+
+        // 提交所有投票
+        async function submitAllVotes() {
+            const voterId = document.getElementById('voter-id').value.trim();
+            if (!voterId) { alert('Please enter your Voter ID'); return; }
+            if (Object.keys(selectedOptions).length === 0) { alert('Please select at least one option'); return; }
+
+            let successCount = 0;
+            let errorCount = 0;
+
+            // 遍历所有选择并提交
+            for (const [pollId, optionId] of Object.entries(selectedOptions)) {
+                try {
+                    const response = await fetch(`${API_BASE}/polls/${pollId}/voters/${voterId}/`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ option_id: optionId })
+                    });
+
+                    if (response.ok) {
+                        successCount++;
+                        addVoteHistory(voterId, pollId, optionId);
+                    } else {
+                        errorCount++;
+                    }
+                } catch (error) {
+                    errorCount++;
+                }
+            }
+
+            if (successCount > 0) {
+                alert(`Successfully voted on ${successCount} poll(s)!`);
+                selectedOptions = {};
+                loadPolls();
+            }
+            if (errorCount > 0) {
+                alert(`Failed to vote on ${errorCount} poll(s). You may have already voted.`);
+            }
+        }
+
+        // 加载结果页面的投票列表
+        async function loadResultsPolls() {
+            try {
+                const response = await fetch(`${API_BASE}/polls/`);
+                const data = await response.json();
+                
+                if (data.polls.length === 0) {
+                    document.getElementById('results-poll-list').innerHTML = '<p class="message info">No polls available</p>';
+                    document.getElementById('results-container').innerHTML = '';
+                    return;
+                }
+
+                let html = '';
+                for (const pollId of data.polls) {
+                    const pollResponse = await fetch(`${API_BASE}/polls/${pollId}/`);
+                    const pollData = await pollResponse.json();
+                    html += `<div class="poll-item" onclick="loadResults(${pollId})">
+                        <h3>${pollData.question}</h3>
+                    </div>`;
+                }
+                document.getElementById('results-poll-list').innerHTML = html;
+            } catch (error) {
+                document.getElementById('results-poll-list').innerHTML = '<p class="message error">Failed to load: ' + error.message + '</p>';
+            }
+        }
+
+        // 加载投票结果
+        async function loadResults(pollId) {
+            try {
+                const response = await fetch(`${API_BASE}/polls/${pollId}/result`);
+                const data = await response.json();
+                
+                if (!data.results || data.results.length === 0) {
+                    document.getElementById('results-container').innerHTML = `
+                        <div class="result-card">
+                            <div class="poll-question">${data.question}</div>
+                            <p class="empty-state">No votes yet</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let resultsHtml = `
+                    <div class="result-card">
+                        <div class="poll-question">${data.question}</div>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${data.total_votes}</div><div class="stat-label">Total Votes</div></div>
+                            <div class="stat-item"><div class="stat-value">${data.results.length}</div><div class="stat-label">Options</div></div>
+                        </div>
+                        <div class="pie-chart-container">
+                            <canvas id="pieChart" width="250" height="250"></canvas>
+                        </div>
+                        <div class="pie-legend" id="pieLegend"></div>
+                    </div>
+                `;
+                
+                document.getElementById('results-container').innerHTML = resultsHtml;
+                drawPieChart(data.results);
+                drawLegend(data.results);
+            } catch (error) {
+                document.getElementById('results-container').innerHTML = '<p class="message error">Failed to load results: ' + error.message + '</p>';
+            }
+        }
+
+        // 绘制饼图
+        function drawPieChart(results) {
+            const canvas = document.getElementById('pieChart');
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(canvas.width, canvas.height) / 2 - 10;
+            
+            const total = results.reduce((sum, r) => sum + r.votes, 0);
+            let startAngle = 0;
+            
+            results.forEach((result, index) => {
+                if (total === 0) return;
+                const sliceAngle = (result.votes / total) * 2 * Math.PI;
+                
+                ctx.fillStyle = colors[index % colors.length];
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+                ctx.closePath();
+                ctx.fill();
+                
+                startAngle += sliceAngle;
+            });
+            
+            if (total === 0) {
+                ctx.fillStyle = '#ddd';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+        }
+
+        // 绘制图例
+        function drawLegend(results) {
+            const legend = document.getElementById('pieLegend');
+            let html = '';
+            results.forEach((result, index) => {
+                html += `<div class="legend-item">
+                    <div class="legend-color" style="background: ${colors[index % colors.length]}"></div>
+                    <span>${result.description}</span>
+                </div>`;
+            });
+            legend.innerHTML = html;
+        }
+
+        // 添加投票历史记录
+        function addVoteHistory(voterId, pollId, optionId) {
+            voteHistory.unshift({
+                voterId,
+                pollId,
+                optionId,
+                time: new Date().toLocaleString('zh-CN')
+            });
+            if (voteHistory.length > 20) voteHistory.pop();
+            localStorage.setItem('voteHistory', JSON.stringify(voteHistory));  // 存储到本地存储
+        }
+
+        // 加载投票历史记录
+        async function loadVoteHistory() {
+            voteHistory = JSON.parse(localStorage.getItem('voteHistory') || '[]');
+            
+            if (voteHistory.length === 0) {
+                document.getElementById('history-container').innerHTML = '<p class="empty-state">No voting history</p>';
+                return;
+            }
+
+            // 统计每个投票的投票次数
+            const pollStats = {};
+            voteHistory.forEach(item => {
+                if (!pollStats[item.pollId]) {
+                    pollStats[item.pollId] = 0;
+                }
+                pollStats[item.pollId]++;
+            });
+
+            // 准备饼图数据
+            const pieData = Object.entries(pollStats).map(([pollId, count]) => ({
+                description: `Poll #${pollId}`,
+                votes: count
+            }));
+
+            let historyHtml = '<div class="history-chart-container">';
+            
+            if (pieData.length > 0) {
+                historyHtml += `
+                    <div class="history-chart">
+                        <canvas id="historyPieChart" width="200" height="200"></canvas>
+                        <div class="pie-legend" id="historyLegend" style="margin-top: 10px;"></div>
+                    </div>
+                `;
+            }
+            
+            // 构建历史记录列表
+            historyHtml += '<div class="history-list">';
+            voteHistory.forEach(item => {
+                historyHtml += `<div class="history-item">
+                    <span class="action">User ${item.voterId} voted on Poll #${item.pollId}</span>
+                    <span class="time">${item.time}</span>
+                </div>`;
+            });
+            historyHtml += '</div></div>';
+            
+            document.getElementById('history-container').innerHTML = historyHtml;
+            
+            if (pieData.length > 0) {
+                drawHistoryPieChart(pieData);
+                drawHistoryLegend(pieData);
+            }
+        }
+
+        // 绘制历史记录饼图
+        function drawHistoryPieChart(pieData) {
+            const canvas = document.getElementById('historyPieChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(canvas.width, canvas.height) / 2 - 10;
+            
+            const total = pieData.reduce((sum, r) => sum + r.votes, 0);
+            let startAngle = 0;
+            
+            pieData.forEach((item, index) => {
+                if (total === 0) return;
+                const sliceAngle = (item.votes / total) * 2 * Math.PI;
+                
+                ctx.fillStyle = colors[index % colors.length];
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+                ctx.closePath();
+                ctx.fill();
+                
+                startAngle += sliceAngle;
+            });
+            
+            if (total === 0) {
+                ctx.fillStyle = '#ddd';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+        }
+
+        // 绘制历史记录图例
+        function drawHistoryLegend(pieData) {
+            const legend = document.getElementById('historyLegend');
+            if (!legend) return;
+            
+            let html = '';
+            pieData.forEach((item, index) => {
+                html += `<div class="legend-item">
+                    <div class="legend-color" style="background: ${colors[index % colors.length]}"></div>
+                    <span>${item.description}: ${item.votes} votes</span>
+                </div>`;
+            });
+            legend.innerHTML = html;
+        }
+
+        // 创建新投票
+        async function createPoll() {
+            const question = document.getElementById('new-question').value.trim();
+            const optionsText = document.getElementById('new-options').value.trim();
+            
+            if (!question) { alert('Please enter poll question'); return; }
+            if (!optionsText) { alert('Please enter poll options'); return; }
+
+            const options = optionsText.split('\n').filter(opt => opt.trim());
+            if (options.length < 2) { alert('At least 2 options required'); return; }
+
+            try {
+                // 首先创建投票
+                const pollResponse = await fetch(`${API_BASE}/polls/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question })
+                });
+                const pollData = await pollResponse.json();
+                const pollId = pollData.poll_id;
+
+                // 然后添加选项
+                for (const option of options) {
+                    await fetch(`${API_BASE}/polls/${pollId}/options/`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ description: option.trim() })
+                    });
+                }
+
+                alert('Poll created successfully!');
+                document.getElementById('new-question').value = '';
+                document.getElementById('new-options').value = '';
+                showTab('vote');  // 切换回投票标签页
+            } catch (error) {
+                alert('Failed to create poll: ' + error.message);
+            }
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPolls();  // 加载投票列表
+        });
+    </script>
+</body>
+</html>

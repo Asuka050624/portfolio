@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户中心功能测试 - 宠物健康管理系统</title>
+    <script src="js/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+        }
+        .test-case {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-case h3 {
+            margin-top: 0;
+            color: #2196F3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 3px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .failed {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-btn {
+            padding: 8px 15px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .test-btn:hover {
+            background-color: #1976D2;
+        }
+        .test-output {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 3px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .status-indicator {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+        .status-logged-in {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .status-logged-out {
+            background-color: #f44336;
+            color: white;
+        }
+        .actions {
+            margin-top: 15px;
+        }
+        .actions button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>宠物健康管理系统 - 用户中心功能测试</h1>
+    
+    <div class="test-case">
+        <h3>测试用例1：登录状态检查测试</h3>
+        <p>测试用户中心页面是否正确检测登录状态</p>
+        <div class="actions">
+            <button class="test-btn" onclick="testLoginStatus(true)">测试已登录状态</button>
+            <button class="test-btn" onclick="testLoginStatus(false)">测试未登录状态</button>
+        </div>
+        <div class="test-output" id="output1"></div>
+        <div class="result" id="result1"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>测试用例2：用户信息显示测试</h3>
+        <p>测试用户信息是否正确显示在用户中心页面</p>
+        <button class="test-btn" onclick="testUserInfoDisplay()">执行测试</button>
+        <div class="test-output" id="output2"></div>
+        <div class="result" id="result2"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>测试用例3：退出登录功能测试</h3>
+        <p>测试退出登录功能是否正常工作</p>
+        <button class="test-btn" onclick="testLogoutFunctionality()">执行测试</button>
+        <div class="test-output" id="output3"></div>
+        <div class="result" id="result3"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>测试用例4：存储兼容性测试</h3>
+        <p>测试系统是否兼容新旧存储方式</p>
+        <button class="test-btn" onclick="testStorageCompatibility()">执行测试</button>
+        <div class="test-output" id="output4"></div>
+        <div class="result" id="result4"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>测试用例5：用户数据管理测试</h3>
+        <p>测试用户相关数据（预约、反馈等）的关联功能</p>
+        <button class="test-btn" onclick="testUserDataManagement()">执行测试</button>
+        <div class="test-output" id="output5"></div>
+        <div class="result" id="result5"></div>
+    </div>
+    
+    <script>
+        // 模拟用户登录状态检查函数
+        function checkLoginStatus() {
+            try {
+                // 检查新的存储方式
+                const userData = localStorage.getItem('user');
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    if (user && user.isLogin) {
+                        return {
+                            isLoggedIn: true,
+                            user: user,
+                            method: 'new'
+                        };
+                    }
+                }
+                
+                // 检查旧的存储方式
+                const oldLoginStatus = localStorage.getItem('isLogin');
+                if (oldLoginStatus && oldLoginStatus === 'true') {
+                    const username = localStorage.getItem('username') || '未知用户';
+                    return {
+                        isLoggedIn: true,
+                        user: { username: username, isLogin: true },
+                        method: 'old'
+                    };
+                }
+                
+                return {
+                    isLoggedIn: false,
+                    method: 'none'
+                };
+            } catch (e) {
+                console.error('检查登录状态时出错:', e);
+                return {
+                    isLoggedIn: false,
+                    error: e.message,
+                    method: 'error'
+                };
+            }
+        }
+        
+        // 模拟用户登录函数
+        function mockLogin(username = '测试用户', password = '123456') {
+            // 检查用户凭据（模拟）
+            const isValidUser = (username.toLowerCase() === 'user' && password === '123456') || 
+                               (username === '测试用户' && password === '123456');
+            
+            if (!isValidUser) {
+                return { success: false, message: '用户名或密码错误' };
+            }
+            
+            // 创建用户对象
+            const user = {
+                username: username,
+                isLogin: true,
+                timestamp: new Date().getTime(),
+                lastLogin: new Date().toLocaleString('zh-CN')
+            };
+            
+            // 保存到localStorage（新方式）
+            localStorage.setItem('user', JSON.stringify(user));
+            
+            return { success: true, message: '登录成功', user: user };
+        }
+        
+        // 模拟旧版用户登录（使用旧存储方式）
+        function mockOldLogin(username = '测试用户') {
+            localStorage.setItem('username', username);
+            localStorage.setItem('isLogin', 'true');
+            
+            return {
+                success: true,
+                message: '已使用旧存储方式设置登录状态'
+            };
+        }
+        
+        // 模拟退出登录函数
+        function mockLogout() {
+            try {
+                // 清除新的存储方式
+                localStorage.removeItem('user');
+                
+                // 清除旧的存储方式
+                localStorage.removeItem('username');
+                localStorage.removeItem('isLogin');
+                
+                return {
+                    success: true,
+                    message: '退出登录成功'
+                };
+            } catch (e) {
+                return {
+                    success: false,
+                    message: '退出登录失败',
+                    error: e.message
+                };
+            }
+        }
+        
+        // 清除所有测试数据
+        function clearTestData() {
+            localStorage.removeItem('user');
+            localStorage.removeItem('username');
+            localStorage.removeItem('isLogin');
+            
+            // 保存原始数据以便恢复
+            const originalReservations = localStorage.getItem('original_reservations');
+            const originalFeedbacks = localStorage.getItem('original_feedbacks');
+            const originalCart = localStorage.getItem('original_cart');
+            
+            // 清除测试数据
+            localStorage.removeItem('reservations');
+            localStorage.removeItem('feedbacks');
+            localStorage.removeItem('cart');
+            
+            // 恢复原始数据
+            if (originalReservations) localStorage.setItem('reservations', originalReservations);
+            if (originalFeedbacks) localStorage.setItem('feedbacks', originalFeedbacks);
+            if (originalCart) localStorage.setItem('cart', originalCart);
+            
+            // 清除备份数据
+            localStorage.removeItem('original_reservations');
+            localStorage.removeItem('original_feedbacks');
+            localStorage.removeItem('original_cart');
+        }
+        
+        // 保存当前数据以便测试后恢复
+        function backupCurrentData() {
+            if (!localStorage.getItem('original_reservations')) {
+                localStorage.setItem('original_reservations', localStorage.getItem('reservations') || '[]');
+            }
+            if (!localStorage.getItem('original_feedbacks')) {
+                localStorage.setItem('original_feedbacks', localStorage.getItem('feedbacks') || '[]');
+            }
+            if (!localStorage.getItem('original_cart')) {
+                localStorage.setItem('original_cart', localStorage.getItem('cart') || '[]');
+            }
+        }
+        
+        // 模拟获取用户相关数据
+        function getRelatedUserData(username) {
+            try {
+                // 获取预约数据
+                let reservations = [];
+                const reservationsData = localStorage.getItem('reservations');
+                if (reservationsData) {
+                    reservations = JSON.parse(reservationsData);
+                }
+                
+                // 获取反馈数据
+                let feedbacks = [];
+                const feedbacksData = localStorage.getItem('feedbacks');
+                if (feedbacksData) {
+                    feedbacks = JSON.parse(feedbacksData);
+                }
+                
+                // 筛选用户数据
+                const userReservations = reservations.filter(res => res.username === username);
+                const userFeedbacks = feedbacks.filter(fb => fb.username === username);
+                
+                return {
+                    reservations: userReservations,
+                    feedbacks: userFeedbacks,
+                    totalReservations: userReservations.length,
+                    totalFeedbacks: userFeedbacks.length
+                };
+            } catch (e) {
+                console.error('获取用户相关数据时出错:', e);
+                return {
+                    error: e.message
+                };
+            }
+        }
+        
+        // 测试用例1：登录状态检查测试
+        function testLoginStatus(shouldLogin) {
+            const output = document.getElementById('output1');
+            const result = document.getElementById('result1');
+            
+            output.textContent = '测试中...\n';
+            
+            // 清除现有登录状态
+            mockLogout();
+            output.textContent += '已清除现有登录状态\n\n';
+            
+            if (shouldLogin) {
+                // 模拟登录
+                const loginResult = mockLogin('测试用户', '123456');
+                output.textContent += '模拟登录结果:\n';
+                output.textContent += `- 成功: ${loginResult.success}\n`;
+                output.textContent += `- 消息: ${loginResult.message}\n\n`;
+            }
+            
+            // 检查登录状态
+            const status = checkLoginStatus();
+            
+            output.textContent += '登录状态检查结果:\n';
+            output.textContent += `- 是否已登录: ${status.isLoggedIn}\n`;
+            output.textContent += `- 检测方法: ${status.method}\n`;
+            
+            if (status.isLoggedIn && status.user) {
+                output.textContent += `- 用户名: ${status.user.username}\n`;
+                output.textContent += `- 登录时间: ${status.user.lastLogin || '未知'}\n`;
+            }
+            
+            // 验证测试结果
+            if (status.isLoggedIn === shouldLogin) {
+                result.className = 'result success';
+                result.textContent = `测试通过！成功${shouldLogin ? '检测到' : '未检测到'}登录状态。`;
+            } else {
+                result.className = 'result failed';
+                result.textContent = '测试失败！登录状态检测不正确。';
+            }
+        }
+        
+        // 测试用例2：用户信息显示测试
+        function testUserInfoDisplay() {
+            const output = document.getElementById('output2');
+            const result = document.getElementById('result2');
+            
+            output.textContent = '测试中...\n';
+            
+            // 模拟登录
+            const loginResult = mockLogin('测试用户', '123456');
+            output.textContent += '模拟登录结果:\n';
+            output.textContent += `- 成功: ${loginResult.success}\n`;
+            output.textContent += `- 用户名: ${loginResult.user.username}\n\n`;
+            
+            // 检查登录状态并获取用户信息
+            const status = checkLoginStatus();
+            
+            if (status.isLoggedIn) {
+                output.textContent += '用户信息显示测试:\n';
+                output.textContent += `- 用户名: ${status.user.username}\n`;
+                output.textContent += `- 登录时间: ${status.user.lastLogin || '未知'}\n`;
+                output.textContent += `- 登录状态: 已登录\n`;
+                output.textContent += `- 时间戳: ${status.user.timestamp}\n`;
+                
+                // 验证信息完整性
+                if (status.user.username && status.user.isLogin) {
+                    result.className = 'result success';
+                    result.textContent = '测试通过！用户信息正确显示。';
+                } else {
+                    result.className = 'result failed';
+                    result.textContent = '测试失败！用户信息不完整。';
+                }
+            } else {
+                result.className = 'result failed';
+                result.textContent = '测试失败！用户未登录。';
+                output.textContent += '错误: 用户未登录，无法显示信息\n';
+            }
+        }
+        
+        // 测试用例3：退出登录功能测试
+        function testLogoutFunctionality() {
+            const output = document.getElementById('output3');
+            const result = document.getElementById('result3');
+            
+            output.textContent = '测试中...\n';
+            
+            // 首先确保用户已登录
+            mockLogin('测试用户', '123456');
+            const preLogoutStatus = checkLoginStatus();
+            output.textContent += '登出前登录状态:\n';
+            output.textContent += `- 是否已登录: ${preLogoutStatus.isLoggedIn}\n\n`;
+            
+            // 执行退出登录
+            const logoutResult = mockLogout();
+            output.textContent += '退出登录结果:\n';
+            output.textContent += `- 成功: ${logoutResult.success}\n`;
+            output.textContent += `- 消息: ${logoutResult.message}\n\n`;
+            
+            // 检查退出后的登录状态
+            const postLogoutStatus = checkLoginStatus();
+            output.textContent += '登出后登录状态:\n';
+            output.textContent += `- 是否已登录: ${postLogoutStatus.isLoggedIn}\n`;
+            
+            // 验证localStorage中是否已清除相关数据
+            const hasUser = localStorage.getItem('user') !== null;
+            const hasOldUser = localStorage.getItem('username') !== null;
+            const hasOldLoginStatus = localStorage.getItem('isLogin') !== null;
+            
+            output.textContent += 'localStorage检查:\n';
+            output.textContent += `- 存在user对象: ${hasUser}\n`;
+            output.textContent += `- 存在旧username: ${hasOldUser}\n`;
+            output.textContent += `- 存在旧isLogin: ${hasOldLoginStatus}\n`;
+            
+            // 验证测试结果
+            if (preLogoutStatus.isLoggedIn && !postLogoutStatus.isLoggedIn && 
+                !hasUser && !hasOldUser && !hasOldLoginStatus) {
+                result.className = 'result success';
+                result.textContent = '测试通过！退出登录功能正常工作。';
+            } else {
+                result.className = 'result failed';
+                result.textContent = '测试失败！退出登录功能未完全清除登录状态。';
+            }
+        }
+        
+        // 测试用例4：存储兼容性测试
+        function testStorageCompatibility() {
+            const output = document.getElementById('output4');
+            const result = document.getElementById('result4');
+            
+            output.textContent = '测试中...\n';
+            
+            // 清除现有登录状态
+            mockLogout();
+            output.textContent += '已清除现有登录状态\n\n';
+            
+            // 测试新存储方式
+            mockLogin('新存储用户', '123456');
+            const newMethodStatus = checkLoginStatus();
+            output.textContent += '新存储方式测试:\n';
+            output.textContent += `- 是否已登录: ${newMethodStatus.isLoggedIn}\n`;
+            output.textContent += `- 检测方法: ${newMethodStatus.method}\n`;
+            output.textContent += `- 用户名: ${newMethodStatus.user?.username}\n\n`;
+            
+            // 清除并测试旧存储方式
+            mockLogout();
+            mockOldLogin('旧存储用户');
+            const oldMethodStatus = checkLoginStatus();
+            output.textContent += '旧存储方式测试:\n';
+            output.textContent += `- 是否已登录: ${oldMethodStatus.isLoggedIn}\n`;
+            output.textContent += `- 检测方法: ${oldMethodStatus.method}\n`;
+            output.textContent += `- 用户名: ${oldMethodStatus.user?.username}\n\n`;
+            
+            // 验证兼容性
+            const newMethodWorks = newMethodStatus.isLoggedIn && 
+                                  newMethodStatus.method === 'new' && 
+                                  newMethodStatus.user.username === '新存储用户';
+            
+            const oldMethodWorks = oldMethodStatus.isLoggedIn && 
+                                  oldMethodStatus.method === 'old' && 
+                                  oldMethodStatus.user.username === '旧存储用户';
+            
+            output.textContent += '兼容性验证:\n';
+            output.textContent += `- 新存储方式工作正常: ${newMethodWorks}\n`;
+            output.textContent += `- 旧存储方式工作正常: ${oldMethodWorks}\n`;
+            
+            if (newMethodWorks && oldMethodWorks) {
+                result.className = 'result success';
+                result.textContent = '测试通过！系统成功兼容新旧存储方式。';
+            } else {
+                result.className = 'result failed';
+                result.textContent = '测试失败！兼容性测试未通过。';
+            }
+        }
+        
+        // 测试用例5：用户数据管理测试
+        function testUserDataManagement() {
+            const output = document.getElementById('output5');
+            const result = document.getElementById('result5');
+            
+            output.textContent = '测试中...\n';
+            
+            // 保存原始数据
+            backupCurrentData();
+            output.textContent += '已备份原始数据\n\n';
+            
+            // 确保用户已登录
+            mockLogin('数据测试用户', '123456');
+            output.textContent += '用户已模拟登录\n\n';
+            
+            // 创建测试数据
+            const testUser = '数据测试用户';
+            
+            // 创建测试预约数据
+            const testReservation = {
+                id: 'RES' + Date.now(),
+                username: testUser,
+                petName: '测试宠物',
+                petType: '猫',
+                serviceType: '常规检查',
+                appointmentDate: '2024-12-31',
+                appointmentTime: '10:00',
+                status: 'pending',
+                createTime: new Date().toLocaleString('zh-CN')
+            };
+            
+            // 创建测试反馈数据
+            const testFeedback = {
+                id: 'FB' + Date.now(),
+                username: testUser,
+                type: 'suggestion',
+                typeText: '建议',
+                content: '这是一条测试反馈',
+                status: 'pending',
+                submitTime: new Date().toLocaleString('zh-CN')
+            };
+            
+            // 保存测试数据
+            localStorage.setItem('reservations', JSON.stringify([testReservation]));
+            localStorage.setItem('feedbacks', JSON.stringify([testFeedback]));
+            
+            output.textContent += '已创建测试数据\n';
+            output.textContent += `- 测试预约ID: ${testReservation.id}\n`;
+            output.textContent += `- 测试反馈ID: ${testFeedback.id}\n\n`;
+            
+            // 获取用户相关数据
+            const userData = getRelatedUserData(testUser);
+            
+            if (userData.error) {
+                result.className = 'result failed';
+                result.textContent = '测试失败！获取用户数据时出错。';
+                output.textContent += `错误: ${userData.error}\n`;
+                return;
+            }
+            
+            output.textContent += '用户相关数据统计:\n';
+            output.textContent += `- 预约数量: ${userData.totalReservations}\n`;
+            output.textContent += `- 反馈数量: ${userData.totalFeedbacks}\n\n`;
+            
+            output.textContent += '获取到的预约详情:\n';
+            output.textContent += JSON.stringify(userData.reservations[0], null, 2) + '\n\n';
+            
+            output.textContent += '获取到的反馈详情:\n';
+            output.textContent += JSON.stringify(userData.feedbacks[0], null, 2) + '\n';
+            
+            // 验证数据关联
+            const reservationMatch = userData.reservations.length === 1 && 
+                                   userData.reservations[0].id === testReservation.id &&
+                                   userData.reservations[0].username === testUser;
+            
+            const feedbackMatch = userData.feedbacks.length === 1 && 
+                                 userData.feedbacks[0].id === testFeedback.id &&
+                                 userData.feedbacks[0].username === testUser;
+            
+            if (reservationMatch && feedbackMatch) {
+                result.className = 'result success';
+                result.textContent = '测试通过！用户数据关联功能正常工作。';
+            } else {
+                result.className = 'result failed';
+                result.textContent = '测试失败！用户数据关联不正确。';
+            }
+            
+            // 清理测试数据
+            clearTestData();
+            output.textContent += '\n已清理测试数据，恢复原始状态\n';
+        }
+    </script>
+</body>
+</html>
