@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>轻大预约系统 - 我的预约</title>
+    <style>
+        /* ========== 全局样式重置与基础设置 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", sans-serif;
+        }
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* ========== 页面头部样式：标题+返回按钮 ========== */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #333;
+            font-size: 28px;
+        }
+        /* 返回预约页面按钮样式 */
+        .back-btn {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* ========== 记录分类标签样式 ========== */
+        .record-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .tab-btn {
+            padding: 8px 20px;
+            background-color: #f5f5f5;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .tab-btn.active {
+            background-color: #3498db;
+            color: white;
+        }
+
+        /* ========== 预约列表样式 ========== */
+        .reservation-list {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        /* 列表头部样式 */
+        .reservation-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            background-color: #f8f9fa;
+            padding: 15px;
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+        }
+        /* 列表项样式 */
+        .reservation-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+        .reservation-item:last-child {
+            border-bottom: none;
+        }
+        /* 空数据提示样式 */
+        .empty-tip {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+            font-size: 18px;
+        }
+        /* 状态标签样式 */
+        .status-tag {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: white;
+            text-align: center;
+        }
+        .status-reserved {
+            background-color: #f1c40f; /* 已预约 */
+        }
+        .status-used {
+            background-color: #e74c3c; /* 正在使用 */
+        }
+        .status-completed {
+            background-color: #2ecc71; /* 已完成 */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 替换后的page-header区域，新增“前往个人中心”按钮 -->
+    <div class="page-header">
+        <h1>我的预约记录</h1>
+        <!-- 保留原“返回预约页面”，新增“前往个人中心”，用竖线分隔 -->
+        <div>
+            <a href="reserve_page.html" class="back-btn" target="_self">返回预约页面</a>
+            <span style="margin: 0 10px;">|</span> <!-- 竖线分隔符，美化布局 -->
+            <a href="personal_center.html" class="back-btn" target="_self">前往个人中心</a>
+        </div>
+    </div>
+
+    <!-- ========== 记录分类标签：全部/已预约/历史记录（已完成+正在使用） ========== -->
+    <div class="record-tabs">
+        <button class="tab-btn active" onclick="filterRecords('all')">全部记录</button>
+        <button class="tab-btn" onclick="filterRecords('reserved')">待使用（已预约）</button>
+        <button class="tab-btn" onclick="filterRecords('history')">历史记录（已完成/使用中）</button>
+    </div>
+
+    <!-- ========== 预约列表容器 ========== -->
+    <div class="reservation-list" id="reservationList">
+        <!-- 列表头部 -->
+        <div class="reservation-header">
+            <div>教学楼</div>
+            <div>自习室</div>
+            <div>座位号</div>
+            <div>预约日期</div>
+            <div>预约时间</div>
+            <div>预约状态</div>
+        </div>
+        <!-- 预约列表项：动态渲染，默认显示空提示 -->
+        <div class="empty-tip" id="emptyTip">暂无预约记录</div>
+    </div>
+</div>
+
+<script>
+    // ========== 初始化默认历史记录（首次打开页面时添加） ==========
+    window.onload = function() {
+        // 1. 初始化默认历史记录（如果localStorage中无数据）
+        initDefaultHistoryRecords();
+        // 2. 渲染全部记录
+        renderReservationList('all');
+        // 3. 监听localStorage变化，实时更新列表
+        window.addEventListener('storage', () => renderReservationList(currentTab));
+    };
+
+    // 全局变量：记录当前选中的标签
+    let currentTab = 'all';
+
+    // ========== 初始化默认历史预约记录 ==========
+    function initDefaultHistoryRecords() {
+        const reservationList = JSON.parse(localStorage.getItem('reservationList')) || [];
+        // 如果已有数据，不再重复添加默认记录
+        if (reservationList.length > 0) return;
+
+        // 模拟的历史预约记录（已完成+正在使用）+ 1条待使用预约
+        const defaultRecords = [
+            // 待使用（已预约）
+            {
+                id: Date.now() - 10000,
+                building: "教三楼",
+                floor: "8楼",
+                room: "810自习室",
+                seat: "座位5",
+                date: "2025-12-26",
+                time: "14:00 - 16:00",
+                status: "已预约"
+            },
+            // 正在使用
+            {
+                id: Date.now() - 20000,
+                building: "教三楼",
+                floor: "8楼",
+                room: "805自习室",
+                seat: "座位12",
+                date: "2025-12-25",
+                time: "09:00 - 11:00",
+                status: "正在使用"
+            },
+            // 已完成历史记录
+            {
+                id: Date.now() - 30000,
+                building: "教二楼",
+                floor: "6楼",
+                room: "608自习室",
+                seat: "座位3",
+                date: "2025-12-24",
+                time: "18:00 - 20:00",
+                status: "已完成"
+            },
+            // 已完成历史记录
+            {
+                id: Date.now() - 40000,
+                building: "教一楼",
+                floor: "5楼",
+                room: "503自习室",
+                seat: "座位8",
+                date: "2025-12-23",
+                time: "10:30 - 12:30",
+                status: "已完成"
+            },
+            // 已完成历史记录
+            {
+                id: Date.now() - 50000,
+                building: "教三楼",
+                floor: "7楼",
+                room: "712自习室",
+                seat: "座位18",
+                date: "2025-12-22",
+                time: "15:00 - 17:00",
+                status: "已完成"
+            },
+            // 已完成历史记录
+            {
+                id: Date.now() - 60000,
+                building: "教二楼",
+                floor: "3楼",
+                room: "306自习室",
+                seat: "座位6",
+                date: "2025-12-21",
+                time: "08:30 - 10:30",
+                status: "已完成"
+            }
+        ];
+
+        // 将默认记录存入localStorage
+        localStorage.setItem('reservationList', JSON.stringify(defaultRecords));
+    }
+
+    // ========== 筛选记录：全部/已预约/历史记录 ==========
+    function filterRecords(type) {
+        // 更新标签激活状态
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        tabBtns.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        // 记录当前标签
+        currentTab = type;
+        // 渲染筛选后的记录
+        renderReservationList(type);
+    }
+
+    // ========== 从localStorage读取数据并渲染预约列表 ==========
+    function renderReservationList(filterType) {
+        const allRecords = JSON.parse(localStorage.getItem('reservationList')) || [];
+        const reservationListDom = document.getElementById('reservationList');
+        const emptyTip = document.getElementById('emptyTip');
+
+        // 1. 先清空原有列表项（保留头部）
+        const existingItems = reservationListDom.querySelectorAll('.reservation-item');
+        existingItems.forEach(item => item.remove());
+
+        // 2. 根据筛选类型过滤记录
+        let filteredRecords = [];
+        if (filterType === 'all') {
+            filteredRecords = allRecords; // 全部记录
+        } else if (filterType === 'reserved') {
+            filteredRecords = allRecords.filter(record => record.status === '已预约'); // 仅待使用
+        } else if (filterType === 'history') {
+            filteredRecords = allRecords.filter(record => record.status === '已完成' || record.status === '正在使用'); // 历史记录
+        }
+
+        // 3. 判断是否有筛选后的记录
+        if (filteredRecords.length === 0) {
+            emptyTip.style.display = "block"; // 显示空提示
+            return;
+        } else {
+            emptyTip.style.display = "none"; // 隐藏空提示
+        }
+
+        // 4. 遍历筛选后的记录，创建列表项
+        filteredRecords.forEach(reservation => {
+            const item = document.createElement("div");
+            item.className = "reservation-item"; // 列表项样式
+
+            // 构造状态标签的类名
+            let statusClass = "";
+            if (reservation.status === "已预约") {
+                statusClass = "status-reserved";
+            } else if (reservation.status === "正在使用") {
+                statusClass = "status-used";
+            } else if (reservation.status === "已完成") {
+                statusClass = "status-completed";
+            }
+
+            // 列表项内容
+            item.innerHTML = `
+                    <div>${reservation.building}</div>
+                    <div>${reservation.room}</div>
+                    <div>${reservation.seat}</div>
+                    <div>${reservation.date}</div>
+                    <div>${reservation.time}</div>
+                    <div class="status-tag ${statusClass}">${reservation.status}</div>
+                `;
+
+            // 将列表项添加到容器（插入到头部之后）
+            reservationListDom.insertBefore(item, emptyTip);
+        });
+    }
+</script>
+</body>
+</html>

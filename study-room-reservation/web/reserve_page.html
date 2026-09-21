@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>轻大预约系统 - 主预约页面</title>
+    <style>
+        /* ========== 全局样式重置与基础设置 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", sans-serif;
+        }
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        /* ========== 页面头部样式：校徽+标题+我的预约按钮 ========== */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        /* 校徽占位样式（避免路径错误） */
+        .school-logo {
+            width: 80px;
+            height: 80px;
+            background-color: #e0e0e0;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #666;
+            font-size: 14px;
+        }
+        /* 我的预约按钮样式 */
+        .my-reserve-btn {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .my-reserve-btn:hover {
+            background-color: #2980b9;
+        }
+        h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        /* ========== 选择器模块样式：教学楼/楼层/房间/日期时间 ========== */
+        .selector-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+            align-items: flex-end;
+        }
+        .selector-item {
+            flex: 1;
+            min-width: 180px;
+        }
+        .selector-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        .selector-item select, .selector-item input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        /* 日期+时间选择组合布局 */
+        .date-time-group {
+            display: flex;
+            gap: 20px;
+            flex: 2;
+            min-width: 500px;
+        }
+
+        /* ========== 座位状态图例样式：提示用户颜色含义 ========== */
+        .seat-legend {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        .legend-color.green {
+            background-color: #2ecc71; /* 空闲 */
+        }
+        .legend-color.yellow {
+            background-color: #f1c40f; /* 已预约 */
+        }
+        .legend-color.red {
+            background-color: #e74c3c; /* 正在使用 */
+        }
+
+        /* ========== 座位布局区域样式：模拟实际自习室桌椅 ========== */
+        .room-layout {
+            border: 2px solid #333;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            background-color: #f9f9f9;
+            display: none; /* 默认隐藏，选完自习室后显示 */
+        }
+        .room-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        /* 座位网格：4行5列，留过道 */
+        .seat-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 120px);
+            gap: 20px 30px;
+            justify-content: center;
+        }
+        /* 单个座位样式：模拟桌椅 */
+        .seat {
+            width: 120px;
+            height: 80px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* 座位下方的椅子示意 */
+        .seat::after {
+            content: "";
+            width: 30px;
+            height: 20px;
+            border-radius: 2px;
+            position: absolute;
+            bottom: -10px;
+        }
+        /* 空闲座位样式 */
+        .seat.available {
+            background-color: #2ecc71;
+        }
+        .seat.available::after {
+            background-color: #27ae60;
+        }
+        /* 已预约座位样式 */
+        .seat.reserved {
+            background-color: #f1c40f;
+            cursor: not-allowed;
+        }
+        .seat.reserved::after {
+            background-color: #d4ac0d;
+        }
+        /* 正在使用座位样式 */
+        .seat.used {
+            background-color: #e74c3c;
+            cursor: not-allowed;
+        }
+        .seat.used::after {
+            background-color: #c0392b;
+        }
+        /* 座位悬浮效果 */
+        .seat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        /* 选中座位的边框样式 */
+        .seat.selected {
+            border: 3px solid #3498db;
+            transform: translateY(-5px);
+        }
+
+        /* ========== 确认预约按钮样式 ========== */
+        .reserve-btn {
+            display: block;
+            width: 220px;
+            height: 55px;
+            line-height: 55px;
+            text-align: center;
+            background-color: #3498db;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 auto;
+            transition: background-color 0.2s;
+        }
+        .reserve-btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .reserve-btn:hover:not(:disabled) {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 页面头部：校徽+系统标题+我的预约按钮 -->
+    <div class="page-header">
+        <div class="header-left">
+            <div class="school-logo">轻大校徽</div>
+            <h1>轻大自习室座位预约系统</h1>
+        </div>
+        <!-- 跳转至个人中心页面，target="_self"确保当前标签页跳转 -->
+        <a href="my_reservations.html" class="my-reserve-btn" target="_self">个人中心</a>
+    </div>
+
+    <!-- ========== 选择器区域：教学楼/楼层/房间/日期时间 ========== -->
+    <div class="selector-group">
+        <!-- 选择教学楼 -->
+        <div class="selector-item">
+            <label for="building">选择教学楼</label>
+            <select id="building" onchange="changeBuilding()">
+                <option value="">--请选择教学楼--</option>
+                <option value="teaching1">教一楼</option>
+                <option value="teaching2">教二楼</option>
+                <option value="teaching3">教三楼</option>
+            </select>
+        </div>
+        <!-- 选择楼层 -->
+        <div class="selector-item">
+            <label for="floor">选择楼层</label>
+            <select id="floor" onchange="changeFloor()" disabled>
+                <option value="">--请先选择教学楼--</option>
+            </select>
+        </div>
+        <!-- 选择自习室 -->
+        <div class="selector-item">
+            <label for="room">选择自习室</label>
+            <select id="room" onchange="showSeats()" disabled>
+                <option value="">--请先选择楼层--</option>
+            </select>
+        </div>
+        <!-- 日期+时间选择组合 -->
+        <div class="date-time-group">
+            <div class="selector-item">
+                <label for="reserveDate">预约日期</label>
+                <input type="date" id="reserveDate" required>
+            </div>
+            <div class="selector-item">
+                <label for="startTime">开始时间</label>
+                <!-- step=900 支持15分钟为间隔选择时间 -->
+                <input type="time" id="startTime" step="900" required value="08:00">
+            </div>
+            <div class="selector-item">
+                <label for="endTime">结束时间</label>
+                <input type="time" id="endTime" step="900" required value="10:00">
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 座位布局区域：选完自习室后显示 ========== -->
+    <div class="room-layout" id="roomLayout">
+        <div class="room-title" id="roomTitle"></div>
+        <!-- 座位状态图例 -->
+        <div class="seat-legend">
+            <div class="legend-item">
+                <div class="legend-color green"></div>
+                <span>绿色：空闲可预约</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color yellow"></div>
+                <span>黄色：已被预约</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color red"></div>
+                <span>红色：正在使用中</span>
+            </div>
+        </div>
+        <!-- 座位网格容器 -->
+        <div class="seat-grid" id="seatGrid"></div>
+    </div>
+
+    <!-- 确认预约按钮，默认禁用，选完座位后启用 -->
+    <button class="reserve-btn" id="reserveBtn" disabled onclick="submitReservation()">确认预约</button>
+</div>
+
+<script>
+    // ========== 页面初始化逻辑 ==========
+    window.onload = function() {
+        // 给预约日期设置默认值为当天
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('reserveDate').value = today;
+        // 初始化localStorage：如果没有预约数据，创建空数组
+        if (!localStorage.getItem('reservationList')) {
+            localStorage.setItem('reservationList', JSON.stringify([]));
+        }
+    };
+
+    // ========== 数据定义：教学楼-楼层-自习室映射关系 ==========
+    const buildingData = {
+        teaching1: { // 教一楼
+            name: "教一楼",
+            floors: ["1", "2", "3", "4", "5"], // 5层
+            rooms: {} // 房间数据后续初始化
+        },
+        teaching2: { // 教二楼
+            name: "教二楼",
+            floors: ["1", "2", "3", "4", "5", "6"], // 6层
+            rooms: {}
+        },
+        teaching3: { // 教三楼
+            name: "教三楼",
+            floors: ["1", "2", "3", "4", "5", "6", "7", "8"], // 8层
+            rooms: {}
+        }
+    };
+
+    // ========== 初始化各教学楼的房间名称 ==========
+    // 1. 教一楼：每层5个房间（101-105, 201-205...501-505）
+    for (let floor of buildingData.teaching1.floors) {
+        buildingData.teaching1.rooms[floor] = Array.from({length:5}, (_,i) => `${floor}0${i+1}自习室`);
+    }
+    // 2. 教二楼：每层8个房间（101-108, 201-208...601-608）
+    for (let floor of buildingData.teaching2.floors) {
+        buildingData.teaching2.rooms[floor] = Array.from({length:8}, (_,i) => {
+            const roomNum = i+1 < 10 ? `0${i+1}` : i+1;
+            return `${floor}${roomNum}自习室`;
+        });
+    }
+    // 3. 教三楼：每层15个房间（101-115, 201-215...801-815，修正8010为810）
+    for (let floor of buildingData.teaching3.floors) {
+        buildingData.teaching3.rooms[floor] = Array.from({length:15}, (_,i) => {
+            const roomNum = i+1; // 房间号1-15
+            // 拼接房间名称：8层的话是801-815，无8010
+            return `${floor}${roomNum < 10 ? '0' + roomNum : roomNum}自习室`;
+        });
+    }
+
+    // ========== 全局变量定义 ==========
+    let selectedSeat = null; // 选中的座位号
+    let selectedSeatElement = null; // 选中的座位DOM元素
+    let selectedRoom = null; // 选中的自习室名称
+
+    // ========== 选择教学楼后加载对应楼层 ==========
+    function changeBuilding() {
+        const buildingSelect = document.getElementById("building");
+        const floorSelect = document.getElementById("floor");
+        const roomSelect = document.getElementById("room");
+        const roomLayout = document.getElementById("roomLayout");
+
+        // 重置楼层和房间选择框
+        floorSelect.innerHTML = "<option value=''>--请选择楼层--</option>";
+        roomSelect.innerHTML = "<option value=''>--请先选择楼层--</option>";
+        roomLayout.style.display = "none"; // 隐藏座位布局
+        floorSelect.disabled = true; // 禁用楼层选择
+        roomSelect.disabled = true; // 禁用房间选择
+
+        const selectedBuilding = buildingSelect.value;
+        if (!selectedBuilding) return; // 未选择教学楼则返回
+
+        // 加载该教学楼的楼层
+        const floors = buildingData[selectedBuilding].floors;
+        floors.forEach(floor => {
+            const option = document.createElement("option");
+            option.value = floor;
+            option.textContent = `${floor}楼`;
+            floorSelect.appendChild(option);
+        });
+        floorSelect.disabled = false; // 启用楼层选择
+    }
+
+    // ========== 选择楼层后加载对应自习室 ==========
+    function changeFloor() {
+        const buildingSelect = document.getElementById("building");
+        const floorSelect = document.getElementById("floor");
+        const roomSelect = document.getElementById("room");
+        const roomLayout = document.getElementById("roomLayout");
+
+        // 重置房间选择框
+        roomSelect.innerHTML = "";
+        roomLayout.style.display = "none"; // 隐藏座位布局
+        roomSelect.disabled = true; // 禁用房间选择
+
+        const selectedBuilding = buildingSelect.value;
+        const selectedFloor = floorSelect.value;
+        if (!selectedBuilding || !selectedFloor) return; // 未选择教学楼/楼层则返回
+
+        // 加载该楼层的自习室
+        const rooms = buildingData[selectedBuilding].rooms[selectedFloor];
+        roomSelect.innerHTML = "<option value=''>--请选择自习室--</option>";
+        rooms.forEach(room => {
+            const option = document.createElement("option");
+            option.value = room;
+            option.textContent = room;
+            roomSelect.appendChild(option);
+        });
+        roomSelect.disabled = false; // 启用房间选择
+    }
+
+    // ========== 选择自习室后加载座位布局 ==========
+    function showSeats() {
+        const roomSelect = document.getElementById("room");
+        const roomLayout = document.getElementById("roomLayout");
+        const roomTitle = document.getElementById("roomTitle");
+        const seatGrid = document.getElementById("seatGrid");
+        const reserveBtn = document.getElementById("reserveBtn");
+
+        // 重置选中状态
+        selectedSeat = null;
+        selectedSeatElement = null;
+        reserveBtn.disabled = true; // 禁用预约按钮
+        roomLayout.style.display = "none"; // 先隐藏
+
+        selectedRoom = roomSelect.value;
+        if (!selectedRoom) return; // 未选择自习室则返回
+
+        // 显示座位布局
+        roomLayout.style.display = "block";
+        roomTitle.textContent = `${selectedRoom} - 座位布局`;
+        seatGrid.innerHTML = ""; // 清空原有座位
+
+        // 生成20个座位（4行×5列）
+        const seatCount = 20;
+        for (let i = 1; i <= seatCount; i++) {
+            const seat = document.createElement("div");
+            seat.className = "seat"; // 基础样式
+            seat.textContent = `座位${i}`; // 座位号
+            seat.dataset.seatNum = i; // 存储座位号到data属性
+
+            // 随机生成座位状态：60%空闲，30%已预约，10%正在使用
+            const randomStatus = Math.random();
+            if (randomStatus < 0.6) {
+                // 空闲状态
+                seat.classList.add("available");
+                // 绑定点击选中事件
+                seat.onclick = function() {
+                    // 取消其他座位的选中状态
+                    document.querySelectorAll(".seat.available").forEach(s => s.classList.remove("selected"));
+                    // 选中当前座位
+                    this.classList.add("selected");
+                    selectedSeat = i;
+                    selectedSeatElement = this;
+                    reserveBtn.disabled = false; // 启用预约按钮
+                };
+            } else if (randomStatus < 0.9) {
+                // 已预约状态
+                seat.classList.add("reserved");
+            } else {
+                // 正在使用状态
+                seat.classList.add("used");
+            }
+
+            seatGrid.appendChild(seat); // 添加到网格
+        }
+    }
+
+    // ========== 提交预约：存储数据到localStorage + 座位变色 ==========
+    function submitReservation() {
+        // 获取选择的信息
+        const buildingSelect = document.getElementById("building");
+        const floorSelect = document.getElementById("floor");
+        const reserveDate = document.getElementById("reserveDate").value;
+        const startTime = document.getElementById("startTime").value;
+        const endTime = document.getElementById("endTime").value;
+
+        // 1. 验证时间合法性
+        if (new Date(`2000-01-01 ${startTime}`) >= new Date(`2000-01-01 ${endTime}`)) {
+            alert("结束时间不能早于开始时间！");
+            return;
+        }
+        if (!reserveDate) {
+            alert("请选择预约日期！");
+            return;
+        }
+
+        // 2. 前端模拟座位变色（从绿色变为黄色已预约）
+        if (selectedSeatElement) {
+            selectedSeatElement.classList.remove("available", "selected");
+            selectedSeatElement.classList.add("reserved");
+        }
+
+        // 3. 构造预约数据对象
+        const reservationData = {
+            id: Date.now(), // 用时间戳作为唯一ID
+            building: buildingData[buildingSelect.value].name, // 教学楼名称（如教三楼）
+            floor: `${floorSelect.value}楼`, // 楼层
+            room: selectedRoom, // 自习室
+            seat: `座位${selectedSeat}`, // 座位号
+            date: reserveDate, // 预约日期
+            time: `${startTime} - ${endTime}`, // 预约时间段
+            status: "已预约" // 预约状态
+        };
+
+        // 4. 从localStorage读取现有预约数据，添加新数据后存回
+        const reservationList = JSON.parse(localStorage.getItem('reservationList'));
+        reservationList.push(reservationData);
+        localStorage.setItem('reservationList', JSON.stringify(reservationList));
+
+        // 5. 预约成功提示
+        alert(`预约成功！\n教学楼：${reservationData.building}\n楼层：${reservationData.floor}\n自习室：${reservationData.room}\n座位：${reservationData.seat}\n预约日期：${reservationData.date}\n预约时间：${reservationData.time}`);
+
+        // 6. 重置选中状态
+        document.getElementById("reserveBtn").disabled = true;
+        selectedSeat = null;
+        selectedSeatElement = null;
+    }
+</script>
+</body>
+<!-- 联系管理员悬浮二维码（预约页面） -->
+<div class="contact-admin" style="position: fixed; right: 30px; bottom: 30px; z-index: 999;">
+    <button class="contact-btn" style="padding: 10px 15px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">联系管理员</button>
+    <div class="qrcode-box" style="display: none; position: absolute; bottom: 40px; right: 0; padding: 10px; background-color: white; border: 1px solid #eee; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <img src="../static/images/weixin.jpg" alt="管理员微信二维码" style="width: 120px; height: 120px;">
+        <p style="font-size: 12px; text-align: center; margin-top: 5px;">扫码联系管理员</p>
+    </div>
+</div>
+<script>
+    document.querySelector('.contact-admin').addEventListener('mouseover', function() {
+        this.querySelector('.qrcode-box').style.display = 'block';
+    });
+    document.querySelector('.contact-admin').addEventListener('mouseout', function() {
+        this.querySelector('.qrcode-box').style.display = 'none';
+    });
+</script>
+</html>

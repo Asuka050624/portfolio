@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<!--
+  文件名称：index.html
+  文件路径：web/index.html
+  文件用途：轻大预约系统的首页（网站入口）
+  核心功能：
+    1. 固定顶部的导航栏（首页、解决方案、登录、免费试用）
+    2. 鼠标悬停“解决方案”显示“自习室预约系统”子栏目
+    3. 鼠标悬停“免费试用”显示二维码（后续补充图片）
+  依赖资源：
+    - ../static/css/style.css：样式文件（控制页面外观）
+    - ../static/js/script.js：脚本文件（控制动态效果）
+    - ../static/images/：图片资源（校徽、二维码）
+-->
+<html lang="zh-CN">
+<head>
+    <!-- 字符编码：UTF-8（支持中文） -->
+    <meta charset="UTF-8">
+    <!-- 页面标题：显示在浏览器标签栏 -->
+    <title>轻大预约 - 自习室预约管理系统</title>
+    <!-- 引入样式文件：控制导航栏、页面布局的外观 -->
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+<!-- 导航栏区域：固定在页面顶部，不会随滚动消失 -->
+<nav class="nav-bar">
+    <!-- 左侧：校徽 + 网站名称 -->
+    <div class="logo">
+        <!-- 校徽图片：后续替换为你的校徽，放在static/images里 -->
+        <img src="../static/images/school_logo.png" alt="轻大预约校徽" width="40" height="40">
+        <span>轻大预约</span>
+    </div>
+
+    <!-- 中间：导航菜单（首页、解决方案） -->
+    <div class="nav-menu">
+        <!-- 首页链接：跳转到自身（首页） -->
+        <a href="index.html">首页</a>
+        <!-- 解决方案：鼠标悬停显示子栏目 -->
+        <div class="dropdown">
+            <a href="#">解决方案</a>
+            <!-- 下拉子栏目：只保留“自习室预约系统” -->
+            <div class="dropdown-content">
+                <a href="#">自习室预约系统</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右侧：登录、免费试用 -->
+    <div class="nav-right">
+        <a href="login.html">登录</a>
+        <!-- 免费试用：点击跳转到注册页（后续创建register.html） -->
+        <a href="register.html" class="trial-btn">免费试用</a>
+    </div>
+</nav>
+
+<!-- 页面主体内容：先留空，后续逐步完善（banner、预约介绍等） -->
+<main class="main-content">
+    <!-- 1. 三张滚动轮播Banner（和你截图一致） -->
+    <section class="carousel-section">
+        <div class="carousel-container">
+            <!-- 第1张Banner：在线预约服务创导者 -->
+            <div class="carousel-item active">
+                <div class="carousel-text">
+                    <h2>在线预约服务创导者</h2>
+                    <p>稳定高效，满足全场景的预约管理需求</p>
+                    <a href="register.html" class="carousel-btn">免费试用</a>
+                    <div class="carousel-img">
+                        <img src="../static/images/banner1.png" alt="在线预约示意图"> <!-- 对应banner2/banner3 -->
+                    </div>
+                </div>
+            </div>
+            <!-- 第2张Banner：领先全行业 -->
+            <div class="carousel-item">
+                <div class="carousel-text">
+                    <h2>领先全行业，值得信赖的品牌</h2>
+                    <p>不只预约，纵深全流程的行业数字化解决方案服务商</p>
+                    <a href="register.html" class="carousel-btn">免费试用</a>
+                    <div class="carousel-img">
+                        <img src="../static/images/banner2.png" alt="在线预约示意图"> <!-- 对应banner2/banner3 -->
+                    </div>
+                </div>
+            </div>
+            <!-- 第3张Banner：一分钟搭建 -->
+            <div class="carousel-item">
+                <div class="carousel-text">
+                    <h2>一分钟搭建专属预约系统</h2>
+                    <p>服务上千家客户，成熟全面的模版配置库</p>
+                    <a href="register.html" class="carousel-btn">免费试用</a>
+                    <div class="carousel-img">
+                        <img src="../static/images/banner3.png" alt="在线预约示意图"> <!-- 对应banner2/banner3 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 轮播指示器（小圆点） -->
+        <div class="carousel-indicators">
+            <span class="indicator active" data-index="0"></span>
+            <span class="indicator" data-index="1"></span>
+            <span class="indicator" data-index="2"></span>
+        </div>
+    </section>
+
+    <!-- 2. 下方6个优势栏目（和你截图一致） -->
+    <section class="advantage-section">
+        <div class="advantage-list">
+            <div class="advantage-item">
+                <div class="hexagon-icon">
+                    <img src="https://img.icons8.com/fluency/30/ffffff/toolbox.png" alt="专业工具">
+                </div>
+                <h3>专业工具</h3>
+                <p>功能超全的预约管理工具</p>
+            </div>
+            <div class="advantage-item">
+                <div class="hexagon-icon">
+                    <img src="https://img.icons8.com/fluency/30/ffffff/rocket.png" alt="快速上手">
+                </div>
+                <h3>快速上手</h3>
+                <p>三分钟拥有专属预约系统</p>
+            </div>
+            <div class="advantage-item">
+                <div class="hexagon-icon">
+                    <img src="https://img.icons8.com/fluency/30/ffffff/paint-palette.png" alt="个性方案">
+                </div>
+                <h3>个性方案</h3>
+                <p>自定义设计系统界面</p>
+            </div>
+            <div class="advantage-item">
+                <div class="hexagon-icon">
+                    <img src="https://img.icons8.com/fluency/30/ffffff/shield.png" alt="系统稳定">
+                </div>
+                <h3>系统稳定</h3>
+                <p>365×24实时技术护航</p>
+            </div>
+            <div class="advantage-item">
+                <div class="hexagon-icon">
+                    <img src="https://img.icons8.com/fluency/30/ffffff/chat.png" alt="专业咨询">
+                </div>
+                <h3>专业咨询</h3>
+                <p>结合业务提供最优方案</p>
+            </div>
+            <div class="advantage-item">
+                <div class="hexagon-icon">
+                    <img src="https://img.icons8.com/fluency/30/ffffff/like.png" alt="口碑优质">
+                </div>
+                <h3>口碑优质</h3>
+                <p>用心服务成就口碑</p>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- 页面右侧悬浮栏：联系我们 + 微信二维码（模仿模板的右侧悬浮） -->
+<div class="side-contact">
+    <!-- 联系我们按钮：竖排文字，鼠标悬停显示二维码 -->
+    <div class="contact-btn">
+        <!-- 拆成两行：第一行“联系”，第二行“我们” -->
+        <span>联系<br>我们</span>
+        <div class="contact-qrcode">
+            <img src="../static/images/weixin.jpg" alt="联系我们二维码" width="120" height="120">
+            <p>微信扫码联系</p>
+        </div>
+    </div>
+</div>
+<!-- 引入脚本文件：控制动态效果（如二维码显示、波浪动画） -->
+<script src="../static/js/script.js"></script>
+</body>
+</html>

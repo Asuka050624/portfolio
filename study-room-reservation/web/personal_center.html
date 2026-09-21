@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>轻大预约系统 - 个人中心</title>
+    <style>
+        /* 全局样式（与原系统统一） */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", sans-serif;
+        }
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* 页面头部 */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .header-btn {
+            padding: 8px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 16px;
+            display: inline-block;
+        }
+        .logout-btn {
+            background-color: #e74c3c;
+        }
+        .header-btn:hover {
+            opacity: 0.9;
+        }
+        h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        /* 标签页导航 */
+        .tab-nav {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            position: relative;
+        }
+        .tab-btn {
+            padding: 12px 25px;
+            background-color: #f8f9fa;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .tab-btn.active {
+            background-color: white;
+            border-bottom: 2px solid #3498db;
+            color: #3498db;
+        }
+        /* 消息未读角标 */
+        .badge {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background-color: #e74c3c;
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        /* 基础信息模块 */
+        .profile-section {
+            display: flex;
+            gap: 30px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .avatar-box {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            color: #666;
+            overflow: hidden;
+        }
+        .avatar-upload {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background-color: rgba(0,0,0,0.5);
+            color: white;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .avatar-input {
+            display: none;
+        }
+        .profile-info {
+            flex: 1;
+            min-width: 300px;
+        }
+        .info-item {
+            margin-bottom: 15px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .info-label {
+            color: #999;
+            width: 80px;
+            display: inline-block;
+        }
+        .edit-btn {
+            padding: 6px 15px;
+            background-color: #f1c40f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .edit-btn:hover {
+            background-color: #e67e22;
+        }
+
+        /* 预约看板模块 */
+        .reserve-board {
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .stats-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            flex: 1;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 150px;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+            margin: 5px 0;
+        }
+        .recent-reserve {
+            margin-top: 20px;
+        }
+        .recent-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .view-all {
+            font-size: 14px;
+            color: #3498db;
+            cursor: pointer;
+        }
+        .reserve-list {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .reserve-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            background-color: #f8f9fa;
+            padding: 10px;
+            font-weight: bold;
+        }
+        .reserve-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+        .violate-item {
+            color: #e74c3c;
+            padding: 10px;
+            border: 1px solid #fadbd8;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        /* 消息中心模块 */
+        .msg-center {
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .msg-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .filter-btn {
+            padding: 5px 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .filter-btn.active {
+            background-color: #3498db;
+            color: white;
+            border: 1px solid #3498db;
+        }
+        .msg-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+        .msg-item.unread {
+            background-color: #fef9e7;
+            font-weight: bold;
+            border-left: 3px solid #f1c40f;
+        }
+        .msg-type {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-right: 10px;
+            display: inline-block;
+        }
+        .type-notice {
+            background-color: #e8f4fd;
+            color: #3498db;
+        }
+        .type-remind {
+            background-color: #fef9e7;
+            color: #f39c12;
+        }
+        .type-warning {
+            background-color: #fadbd8;
+            color: #e74c3c;
+        }
+        .msg-time {
+            color: #999;
+            font-size: 14px;
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .msg-del {
+            color: #999;
+            cursor: pointer;
+        }
+        .msg-del:hover {
+            color: #e74c3c;
+        }
+
+        /* 积分等级模块 */
+        .point-level {
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .level-card {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .level-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(46, 204, 113, 0.3);
+        }
+        .point-info {
+            flex: 1;
+            min-width: 300px;
+        }
+        .point-progress {
+            width: 100%;
+            height: 10px;
+            background-color: #eee;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #2ecc71;
+            border-radius: 5px;
+        }
+        .point-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #f1c40f;
+        }
+        .rule-list {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .rule-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .rule-item {
+            margin-bottom: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .exchange-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .exchange-card {
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .exchange-btn {
+            padding: 6px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .exchange-btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        /* 弹窗样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 400px;
+            max-width: 90%;
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .modal-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .modal-btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .modal-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .confirm-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        .cancel-btn {
+            background-color: #eee;
+        }
+
+        /* 空数据提示 */
+        .empty-tip {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 页面头部 -->
+    <div class="page-header">
+        <a href="reserve_page.html" class="header-btn" target="_self">返回预约页面</a>
+        <h1>我的个人中心</h1>
+        <button class="header-btn logout-btn" onclick="logout()">退出登录</button>
+    </div>
+
+    <!-- 标签页导航 -->
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('profile')">基础信息</button>
+        <button class="tab-btn" onclick="switchTab('reserve')">预约看板</button>
+        <button class="tab-btn" onclick="switchTab('message')">消息中心
+            <span class="badge" id="unread-count">2</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('point')">积分等级</button>
+        <button class="tab-btn" onclick="switchTab('props')">我的道具</button>
+    </div>
+
+    <!-- 1. 基础信息模块 -->
+    <div class="tab-content" id="profile">
+        <div class="profile-section">
+            <div class="avatar-box">
+                <img id="user-avatar" src="" alt="头像" style="width: 100%; height: 100%; object-fit: cover;">
+                <span id="avatar-placeholder">轻大</span>
+                <label class="avatar-upload">
+                    更换头像
+                    <input type="file" class="avatar-input" id="avatar-input" accept="image/*" onchange="uploadAvatar()">
+                </label>
+            </div>
+            <div class="profile-info">
+                <div class="info-item">
+                    <span class="info-label">昵称：</span>
+                    <span id="user-nickname">轻大学子</span>
+                    <button class="edit-btn" onclick="openModal('nickname-modal')">修改</button>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">学号：</span>
+                    <span id="user-student-id">未绑定</span>
+                    <button class="edit-btn" onclick="openModal('student-id-modal')">绑定</button>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">手机：</span>
+                    <span id="user-phone">138****1234</span>
+                    <button class="edit-btn" onclick="openModal('phone-modal')">修改</button>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">密码：</span>
+                    <span>●●●●●●</span>
+                    <button class="edit-btn" onclick="openModal('pwd-modal')">修改</button>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">账号状态：</span>
+                    <span style="color: #2ecc71;">正常</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 预约看板模块 -->
+    <div class="tab-content" id="reserve" style="display: none;">
+        <div class="reserve-board">
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-name">近7天预约</div>
+                    <div class="stat-value" id="reserve-count">0</div>
+                    <div class="stat-desc">次</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-name">累计自习时长</div>
+                    <div class="stat-value" id="study-duration">0</div>
+                    <div class="stat-desc">小时</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-name">常用教学楼</div>
+                    <div class="stat-value" id="freq-building">--</div>
+                    <div class="stat-desc">占比 --%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-name">违规记录</div>
+                    <div class="stat-value" id="violate-count">0</div>
+                    <div class="stat-desc">次</div>
+                </div>
+            </div>
+
+            <div class="recent-reserve">
+                <div class="recent-title">
+                    近7天预约记录
+                    <span class="view-all" onclick="window.open('my_reservations.html', '_self')">查看全部</span>
+                </div>
+                <div class="reserve-list" id="recent-reserve-list">
+                    <div class="reserve-header">
+                        <div>自习室</div>
+                        <div>座位</div>
+                        <div>日期</div>
+                        <div>状态</div>
+                        <div>操作</div>
+                    </div>
+                    <div class="empty-tip">暂无预约记录</div>
+                </div>
+            </div>
+
+            <div class="recent-reserve" style="margin-top: 30px;">
+                <div class="recent-title">违规记录</div>
+                <div id="violate-list">
+                    <div class="empty-tip">暂无违规记录</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 消息中心模块 -->
+    <div class="tab-content" id="message" style="display: none;">
+        <div class="msg-center">
+            <div class="msg-filter">
+                <button class="filter-btn active" onclick="filterMsg('all')">全部消息</button>
+                <button class="filter-btn" onclick="filterMsg('unread')">未读消息</button>
+                <button class="filter-btn" onclick="filterMsg('notice')">系统通知</button>
+                <button class="filter-btn" onclick="filterMsg('remind')">预约提醒</button>
+                <button class="filter-btn" onclick="filterMsg('warning')">违规警告</button>
+            </div>
+            <div id="msg-list">
+                <!-- 消息列表动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. 积分等级模块 -->
+    <div class="tab-content" id="point" style="display: none;">
+        <div class="point-level">
+            <div class="level-card">
+                <div class="level-icon" id="level-icon">Lv1</div>
+                <div class="point-info">
+                    <div>当前等级：<span id="level-name">萌新级</span></div>
+                    <div class="point-value" id="point-value">50/200</div>
+                    <div class="point-progress">
+                        <div class="progress-bar" id="progress-bar" style="width: 25%;"></div>
+                    </div>
+                    <div>距离下一等级还差<span id="point-left">150</span>分</div>
+                </div>
+            </div>
+
+            <div class="rule-list">
+                <div class="rule-title">积分规则</div>
+                <div class="rule-item">✅ 按时签到 +10分/次</div>
+                <div class="rule-item">✅ 主动释放座位 +5分/次</div>
+                <div class="rule-item">✅ 评价自习室 +8分/次</div>
+                <div class="rule-item">❌ 预约未签到 -20分/次</div>
+                <div class="rule-item">❌ 超时占座 -15分/次</div>
+            </div>
+
+            <div class="rule-list" style="margin-top: 20px;">
+                <div class="rule-title">等级权益</div>
+                <div class="rule-item">Lv1（萌新）：提前1天预约、基础座位可选</div>
+                <div class="rule-item">Lv2（成长）：提前2天预约、解锁带插座座位</div>
+                <div class="rule-item">Lv3（资深）：提前3天预约、解锁靠窗座位</div>
+                <div class="rule-item">Lv4（学霸）：提前7天预约、专属储物柜使用权</div>
+            </div>
+
+            <div class="rule-list" style="margin-top: 20px;">
+                <div class="rule-title">积分兑换</div>
+                <div class="exchange-list">
+                    <div class="exchange-card">
+                        <div>优先选座权</div>
+                        <div>50积分/次</div>
+                        <button class="exchange-btn" onclick="exchange('priority')">立即兑换</button>
+                    </div>
+                    <div class="exchange-card">
+                        <div>延长预约1小时</div>
+                        <div>30积分/次</div>
+                        <button class="exchange-btn" onclick="exchange('extend')">立即兑换</button>
+                    </div>
+                    <div class="exchange-card">
+                        <div>储物柜1小时</div>
+                        <div>20积分/次</div>
+                        <button class="exchange-btn" onclick="exchange('locker')">立即兑换</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增：5. 我的道具模块 -->
+    <div class="tab-content" id="props" style="display: none;">
+        <div class="point-level">
+            <div class="rule-title" style="font-size: 18px; margin-bottom: 20px;">我的道具</div>
+            <div class="reserve-list" id="props-list">
+                <div class="reserve-header">
+                    <div>道具名称</div>
+                    <div>兑换时间</div>
+                    <div>状态</div>
+                    <div>操作</div>
+                </div>
+                <div class="empty-tip">暂无已兑换的道具</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 昵称修改弹窗 -->
+    <div class="modal" id="nickname-modal">
+        <div class="modal-content">
+            <div class="modal-title">修改昵称</div>
+            <input type="text" class="modal-input" id="nickname-input" placeholder="请输入新昵称">
+            <div class="modal-btn-group">
+                <button class="modal-btn confirm-btn" onclick="saveNickname()">确认</button>
+                <button class="modal-btn cancel-btn" onclick="closeModal()">取消</button>
+            </div>
+        </div>
+    </div>
+<!-- 学号绑定弹窗 -->
+<div class="modal" id="student-id-modal">
+    <div class="modal-content">
+        <div class="modal-title">绑定学号</div>
+        <input type="text" class="modal-input" id="student-id-input" placeholder="请输入学号/校园卡号">
+        <div class="modal-btn-group">
+            <button class="modal-btn confirm-btn" onclick="saveStudentId()">确认</button>
+            <button class="modal-btn cancel-btn" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+</div>
+
+<!-- 手机修改弹窗 -->
+<div class="modal" id="phone-modal">
+    <div class="modal-content">
+        <div class="modal-title">修改手机号</div>
+        <input type="text" class="modal-input" id="phone-input" placeholder="请输入新手机号">
+        <div class="modal-btn-group">
+            <button class="modal-btn confirm-btn" onclick="savePhone()">确认</button>
+            <button class="modal-btn cancel-btn" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+</div>
+
+<!-- 密码修改弹窗 -->
+<div class="modal" id="pwd-modal">
+    <div class="modal-content">
+        <div class="modal-title">修改密码</div>
+        <input type="password" class="modal-input" id="old-pwd-input" placeholder="请输入原密码">
+        <input type="password" class="modal-input" id="new-pwd-input" placeholder="请输入新密码">
+        <input type="password" class="modal-input" id="confirm-pwd-input" placeholder="请确认新密码">
+        <div class="modal-btn-group">
+            <button class="modal-btn confirm-btn" onclick="savePwd()">确认</button>
+            <button class="modal-btn cancel-btn" onclick="closeModal()">取消</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== 全局数据初始化 ==========
+    // 从localStorage加载用户数据，首次加载初始化默认密码123456
+    const userData = JSON.parse(localStorage.getItem('userData')) || {
+        nickname: '轻大学子',
+        studentId: '',
+        phone: '138****1234',
+        avatar: '',
+        point: 50,
+        level: 1,
+        violate: [],
+        pwd: '123456' // 新增：用户密码字段，初始默认密码
+    };
+    // 首次加载时将默认数据存入localStorage（确保密码持久化）
+    if (!localStorage.getItem('userData')) {
+        localStorage.setItem('userData', JSON.stringify(userData));
+    }
+    // 消息数据
+    const msgData = JSON.parse(localStorage.getItem('msgData')) || [
+        { id: 1, type: 'remind', content: '您预约的教三楼810自习室座位5，将于1小时后到期', time: '2025-12-25 13:00', read: false },
+        { id: 2, type: 'notice', content: '教二楼203自习室因维修，2025-12-26暂停开放', time: '2025-12-24 09:30', read: false },
+        { id: 3, type: 'point', content: '您完成签到，获得10积分，当前积分：50', time: '2025-12-23 16:45', read: true },
+        { id: 4, type: 'warning', content: '您预约的教一楼503座位8未按时签到，扣除20积分', time: '2025-12-22 10:00', read: true }
+    ];
+    // 新增：道具列表数据
+    const propsData = JSON.parse(localStorage.getItem('propsData')) || [];
+    // 积分等级配置
+    const levelConfig = [
+        { level: 1, name: '萌新级', minPoint: 0, maxPoint: 200 },
+        { level: 2, name: '成长级', minPoint: 200, maxPoint: 500 },
+        { level: 3, name: '资深级', minPoint: 500, maxPoint: 1000 },
+        { level: 4, name: '学霸级', minPoint: 1000, maxPoint: Infinity }
+    ];
+
+    // ========== 页面加载初始化 ==========
+    window.onload = function() {
+        // 渲染用户信息
+        renderUserInfo();
+        // 渲染预约数据
+        syncReserveRecords();
+        // 渲染消息列表
+        renderMsgList('all');
+        // 渲染积分等级
+        renderPointLevel();
+        // 计算未读消息数
+        updateUnreadCount();
+        // 新增：渲染我的道具
+        renderPropsList();
+    };
+
+    // ========== 标签页切换 ==========
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById(tabId).style.display = 'block';
+
+        // 切换到消息中心时标记为已读
+        if (tabId === 'message') markMsgAsRead();
+        // 新增：切换到道具页时渲染道具列表
+        if (tabId === 'props') renderPropsList();
+    }
+
+    // ========== 基础信息管理 ==========
+    // 渲染用户信息
+    function renderUserInfo() {
+        document.getElementById('user-nickname').textContent = userData.nickname;
+        document.getElementById('user-student-id').textContent = userData.studentId || '未绑定';
+        document.getElementById('user-phone').textContent = userData.phone;
+        // 头像渲染
+        if (userData.avatar) {
+            document.getElementById('user-avatar').src = userData.avatar;
+            document.getElementById('avatar-placeholder').style.display = 'none';
+        } else {
+            document.getElementById('avatar-placeholder').style.display = 'block';
+        }
+        // 违规记录
+        document.getElementById('violate-count').textContent = userData.violate.length;
+        renderViolateList();
+    }
+
+    // 头像上传（前端模拟，实际对接后端）
+    function uploadAvatar() {
+        const file = document.getElementById('avatar-input').files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                userData.avatar = e.target.result;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                document.getElementById('user-avatar').src = e.target.result;
+                document.getElementById('avatar-placeholder').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // 打开弹窗
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = 'flex';
+        // 预填数据
+        if (modalId === 'nickname-modal') {
+            document.getElementById('nickname-input').value = userData.nickname;
+        } else if (modalId === 'student-id-modal') {
+            document.getElementById('student-id-input').value = userData.studentId || '';
+        } else if (modalId === 'phone-modal') {
+            const phone = userData.phone.replace(/\*/g, '');
+            document.getElementById('phone-input').value = phone;
+        }
+    }
+
+    // 关闭弹窗
+    function closeModal() {
+        document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
+    }
+
+    // 保存昵称
+    function saveNickname() {
+        const newNickname = document.getElementById('nickname-input').value.trim();
+        if (newNickname) {
+            userData.nickname = newNickname;
+            localStorage.setItem('userData', JSON.stringify(userData));
+            document.getElementById('user-nickname').textContent = newNickname;
+            closeModal();
+            alert('昵称修改成功！');
+        } else {
+            alert('请输入有效的昵称！');
+        }
+    }
+
+    // 保存学号
+    function saveStudentId() {
+        const newId = document.getElementById('student-id-input').value.trim();
+        if (newId) {
+            userData.studentId = newId;
+            localStorage.setItem('userData', JSON.stringify(userData));
+            document.getElementById('user-student-id').textContent = newId;
+            closeModal();
+            alert('学号绑定成功！');
+        } else {
+            alert('请输入有效的学号！');
+        }
+    }
+
+    // 保存手机号
+    function savePhone() {
+        const newPhone = document.getElementById('phone-input').value.trim();
+        if (/^1[3-9]\d{9}$/.test(newPhone)) {
+            const maskPhone = newPhone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
+            userData.phone = maskPhone;
+            localStorage.setItem('userData', JSON.stringify(userData));
+            document.getElementById('user-phone').textContent = maskPhone;
+            closeModal();
+            alert('手机号修改成功！');
+        } else {
+            alert('手机号格式不正确！');
+        }
+    }
+
+    // 保存密码（修改为跳转到login.html）
+    // 保存密码
+    // 保存密码
+    // 保存密码
+    function savePwd() {
+        const oldPwd = document.getElementById('old-pwd-input').value;
+        const newPwd = document.getElementById('new-pwd-input').value;
+        const confirmPwd = document.getElementById('confirm-pwd-input').value;
+
+        // 1. 验证输入不为空
+        if (oldPwd === '' || newPwd === '' || confirmPwd === '') {
+            alert('请完整输入密码！');
+            return;
+        }
+        // 2. 验证原密码是否正确
+        if (oldPwd !== userData.pwd) {
+            alert('原密码输入错误！');
+            return;
+        }
+        // 3. 验证新密码是否一致
+        if (newPwd !== confirmPwd) {
+            alert('两次输入的新密码不一致！');
+            return;
+        }
+        // 4. 验证新密码与原密码是否相同
+        if (newPwd === oldPwd) {
+            alert('新密码不能与原密码相同！');
+            return;
+        }
+        // 5. 保存新密码到localStorage（持久化）
+        userData.pwd = newPwd;
+        localStorage.setItem('userData', JSON.stringify(userData));
+        closeModal();
+        alert('密码修改成功！请重新登录');
+        // 清除登录状态，跳转到登录页
+        localStorage.removeItem('isLogin');
+        window.location.href = 'login.html';
+    }
+    // ========== 预约看板模块 ==========
+    // 同步预约记录
+    function syncReserveRecords() {
+        const reserveList = JSON.parse(localStorage.getItem('reservationList')) || [];
+        const recentListDom = document.getElementById('recent-reserve-list');
+        recentListDom.innerHTML = '';
+
+        // 统计近7天数据
+        const today = new Date();
+        const sevenDaysAgo = new Date(today.setDate(today.getDate() - 7));
+        const recentRecords = reserveList.filter(record => {
+            const recordDate = new Date(record.date);
+            return recordDate >= sevenDaysAgo;
+        });
+
+        // 渲染统计数据
+        document.getElementById('reserve-count').textContent = recentRecords.length;
+        // 计算累计时长（单次预约按2小时计算，实际需按预约时间段）
+        const totalHours = reserveList.length * 2;
+        document.getElementById('study-duration').textContent = totalHours;
+        // 计算常用教学楼
+        const buildingCount = {};
+        reserveList.forEach(record => {
+            const building = record.building;
+            buildingCount[building] = (buildingCount[building] || 0) + 1;
+        });
+        let maxBuilding = '--';
+        let maxCount = 0;
+        for (const [building, count] of Object.entries(buildingCount)) {
+            if (count > maxCount) {
+                maxCount = count;
+                maxBuilding = building;
+            }
+        }
+        if (maxBuilding !== '--') {
+            const ratio = Math.round((maxCount / reserveList.length) * 100);
+            document.getElementById('freq-building').textContent = maxBuilding;
+            document.querySelector('#freq-building + .stat-desc').textContent = `占比 ${ratio}%`;
+        } else {
+            document.getElementById('freq-building').textContent = '--';
+            document.querySelector('#freq-building + .stat-desc').textContent = '占比 --%';
+        }
+
+        // 渲染近7天记录
+        if (recentRecords.length === 0) {
+            recentListDom.innerHTML = `
+                    <div class="reserve-header">
+                        <div>自习室</div>
+                        <div>座位</div>
+                        <div>日期</div>
+                        <div>状态</div>
+                        <div>操作</div>
+                    </div>
+                    <div class="empty-tip">暂无预约记录</div>
+                `;
+            return;
+        }
+
+        // 生成表头
+        recentListDom.innerHTML = `
+                <div class="reserve-header">
+                    <div>自习室</div>
+                    <div>座位</div>
+                    <div>日期</div>
+                    <div>状态</div>
+                    <div>操作</div>
+                </div>
+            `;
+        // 生成记录项
+        recentRecords.slice(0, 5).forEach(record => {
+            const item = document.createElement('div');
+            item.className = 'reserve-item';
+            const statusColor = record.status === '已预约' ? '#f1c40f' : record.status === '正在使用' ? '#e74c3c' : '#2ecc71';
+            item.innerHTML = `
+                    <div>${record.room}</div>
+                    <div>${record.seat}</div>
+                    <div>${record.date}</div>
+                    <div style="color: ${statusColor}">${record.status}</div>
+                    <div>
+                        ${record.status === '已预约' ? '<button class="edit-btn" style="padding: 2px 8px; font-size: 12px;" onclick="cancelReserve(' + record.id + ')">取消</button>' : '--'}
+                    </div>
+                `;
+            recentListDom.appendChild(item);
+        });
+    }
+
+    // 渲染违规记录
+    function renderViolateList() {
+        const violateList = document.getElementById('violate-list');
+        if (userData.violate.length === 0) {
+            violateList.innerHTML = '<div class="empty-tip">暂无违规记录</div>';
+            return;
+        }
+        violateList.innerHTML = '';
+        userData.violate.forEach(violate => {
+            const item = document.createElement('div');
+            item.className = 'violate-item';
+            item.innerHTML = `
+                    <div>违规类型：${violate.type}</div>
+                    <div>违规时间：${violate.time}</div>
+                    <div>违规描述：${violate.desc}</div>
+                `;
+            violateList.appendChild(item);
+        });
+    }
+
+    // 取消预约
+    function cancelReserve(reserveId) {
+        if (confirm('确定要取消该预约吗？')) {
+            let reserveList = JSON.parse(localStorage.getItem('reservationList')) || [];
+            reserveList = reserveList.filter(record => record.id !== reserveId);
+            localStorage.setItem('reservationList', JSON.stringify(reserveList));
+            // 扣除5积分（取消预约惩罚）
+            changePoint(-5, '取消预约扣除积分');
+            syncReserveRecords();
+            alert('预约取消成功！');
+        }
+    }
+
+    // ========== 消息中心模块 ==========
+    // 渲染消息列表
+    function renderMsgList(filterType) {
+        const msgList = document.getElementById('msg-list');
+        let filteredMsg = [...msgData];
+
+        // 消息筛选
+        if (filterType === 'unread') {
+            filteredMsg = filteredMsg.filter(msg => !msg.read);
+        } else if (filterType === 'notice') {
+            filteredMsg = filteredMsg.filter(msg => msg.type === 'notice');
+        } else if (filterType === 'remind') {
+            filteredMsg = filteredMsg.filter(msg => msg.type === 'remind');
+        } else if (filterType === 'warning') {
+            filteredMsg = filteredMsg.filter(msg => msg.type === 'warning');
+        }
+
+        if (filteredMsg.length === 0) {
+            msgList.innerHTML = '<div class="empty-tip">暂无相关消息</div>';
+            return;
+        }
+
+        // 生成消息项
+        msgList.innerHTML = '';
+        filteredMsg.forEach(msg => {
+            const item = document.createElement('div');
+            item.className = `msg-item ${msg.read ? '' : 'unread'}`;
+            // 消息类型标签
+            let typeLabel = '';
+            if (msg.type === 'notice') typeLabel = '<span class="msg-type type-notice">系统通知</span>';
+            else if (msg.type === 'remind') typeLabel = '<span class="msg-type type-remind">预约提醒</span>';
+            else if (msg.type === 'warning') typeLabel = '<span class="msg-type type-warning">违规警告</span>';
+            else if (msg.type === 'point') typeLabel = '<span class="msg-type type-notice">积分变动</span>';
+
+            item.innerHTML = `
+                    <div>${typeLabel}${msg.content}</div>
+                    <div class="msg-time">
+                        <span>${msg.time}</span>
+                        <span class="msg-del" onclick="deleteMsg(${msg.id})">删除</span>
+                    </div>
+                `;
+            // 点击标记为已读
+            item.onclick = () => markSingleMsgAsRead(msg.id);
+            msgList.appendChild(item);
+        });
+    }
+
+    // 筛选消息
+    function filterMsg(filterType) {
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        renderMsgList(filterType);
+    }
+
+    // 标记所有消息为已读
+    function markMsgAsRead() {
+        msgData.forEach(msg => msg.read = true);
+        localStorage.setItem('msgData', JSON.stringify(msgData));
+        updateUnreadCount();
+        renderMsgList('all');
+    }
+
+    // 标记单条消息为已读
+    function markSingleMsgAsRead(msgId) {
+        const msg = msgData.find(m => m.id === msgId);
+        if (msg && !msg.read) {
+            msg.read = true;
+            localStorage.setItem('msgData', JSON.stringify(msgData));
+            updateUnreadCount();
+            renderMsgList(document.querySelector('.filter-btn.active').dataset.type || 'all');
+        }
+    }
+
+    // 删除消息
+    function deleteMsg(msgId) {
+        if (confirm('确定要删除该消息吗？')) {
+            const index = msgData.findIndex(m => m.id === msgId);
+            if (index !== -1) {
+                msgData.splice(index, 1);
+                localStorage.setItem('msgData', JSON.stringify(msgData));
+                updateUnreadCount();
+                renderMsgList('all');
+            }
+        }
+    }
+
+    // 更新未读消息数
+    function updateUnreadCount() {
+        const unreadCount = msgData.filter(msg => !msg.read).length;
+        document.getElementById('unread-count').textContent = unreadCount;
+    }
+
+    // ========== 积分等级模块 ==========
+    // 渲染积分等级
+    function renderPointLevel() {
+        // 计算当前等级
+        let currentLevel = levelConfig.find(level => userData.point >= level.minPoint && userData.point < level.maxPoint);
+        userData.level = currentLevel.level;
+
+        // 渲染等级信息
+        document.getElementById('level-icon').textContent = `Lv${currentLevel.level}`;
+        document.getElementById('level-name').textContent = currentLevel.name;
+        document.getElementById('point-value').textContent = `${userData.point}/${currentLevel.maxPoint === Infinity ? '∞' : currentLevel.maxPoint}`;
+        // 进度条
+        const progress = currentLevel.maxPoint === Infinity ? 100 : Math.round((userData.point - currentLevel.minPoint) / (currentLevel.maxPoint - currentLevel.minPoint) * 100);
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+        // 剩余积分
+        const pointLeft = currentLevel.maxPoint === Infinity ? 0 : currentLevel.maxPoint - userData.point;
+        document.getElementById('point-left').textContent = pointLeft;
+
+        // 禁用积分不足的兑换按钮
+        const exchangeBtns = document.querySelectorAll('.exchange-btn');
+        exchangeBtns[0].disabled = userData.point < 50; // 优先选座
+        exchangeBtns[1].disabled = userData.point < 30; // 延长预约
+        exchangeBtns[2].disabled = userData.point < 20; // 储物柜
+    }
+
+    // 积分变动
+    function changePoint(num, desc) {
+        userData.point += num;
+        if (userData.point < 0) userData.point = 0;
+        // 新增积分消息
+        msgData.unshift({
+            id: Date.now(),
+            type: 'point',
+            content: desc,
+            time: new Date().toLocaleString().replace(/\//g, '-'),
+            read: false
+        });
+        localStorage.setItem('userData', JSON.stringify(userData));
+        localStorage.setItem('msgData', JSON.stringify(msgData));
+        // 重新渲染
+        renderPointLevel();
+        updateUnreadCount();
+    }
+
+    // ========== 积分等级模块 ==========
+    // 积分兑换：新增道具添加逻辑
+    function exchange(type) {
+        let exchangeDesc = '';
+        let pointCost = 0;
+        let propName = '';
+
+        if (type === 'priority') {
+            exchangeDesc = '兑换优先选座权1次';
+            pointCost = 50;
+            propName = '优先选座权';
+        } else if (type === 'extend') {
+            exchangeDesc = '兑换延长预约1小时';
+            pointCost = 30;
+            propName = '延长预约1小时';
+        } else if (type === 'locker') {
+            exchangeDesc = '兑换储物柜使用权1小时';
+            pointCost = 20;
+            propName = '储物柜1小时';
+        }
+
+        if (userData.point >= pointCost) {
+            if (confirm(`确定要消耗${pointCost}积分${exchangeDesc}吗？`)) {
+                changePoint(-pointCost, `${exchangeDesc}，消耗${pointCost}积分`);
+                // 新增：添加道具到列表
+                const newProp = {
+                    id: Date.now(),
+                    name: propName,
+                    time: new Date().toLocaleString().replace(/\//g, '-'),
+                    used: false
+                };
+                propsData.push(newProp);
+                localStorage.setItem('propsData', JSON.stringify(propsData));
+                renderPropsList(); // 重新渲染道具列表
+                alert(`兑换成功！获得${propName}`);
+            }
+        } else {
+            alert('积分不足，无法兑换！');
+        }
+    }
+
+    // 新增：渲染我的道具列表
+    function renderPropsList() {
+        const propsListDom = document.getElementById('props-list');
+        propsListDom.innerHTML = `
+        <div class="reserve-header">
+            <div>道具名称</div>
+            <div>兑换时间</div>
+            <div>状态</div>
+            <div>操作</div>
+        </div>
+    `;
+
+        if (propsData.length === 0) {
+            propsListDom.innerHTML += '<div class="empty-tip">暂无已兑换的道具</div>';
+            return;
+        }
+
+        propsData.forEach(prop => {
+            const item = document.createElement('div');
+            item.className = 'reserve-item';
+            const statusText = prop.used ? '已使用' : '未使用';
+            const statusColor = prop.used ? '#999' : '#2ecc71';
+            const btnText = prop.used ? '已使用' : '立即使用';
+            const btnDisabled = prop.used ? 'disabled' : '';
+            item.innerHTML = `
+            <div>${prop.name}</div>
+            <div>${prop.time}</div>
+            <div style="color: ${statusColor}">${statusText}</div>
+            <div>
+                <button class="edit-btn" style="padding: 2px 8px; font-size: 12px;" ${btnDisabled} onclick="useProp(${prop.id})">${btnText}</button>
+            </div>
+        `;
+            propsListDom.appendChild(item);
+        });
+    }
+
+    // 新增：使用道具函数
+    function useProp(propId) {
+        const propIndex = propsData.findIndex(p => p.id === propId);
+        if (propIndex !== -1) {
+            propsData[propIndex].used = true;
+            localStorage.setItem('propsData', JSON.stringify(propsData));
+            renderPropsList();
+            alert(`已使用道具：${propsData[propIndex].name}`);
+            // 可扩展：添加道具对应的功能逻辑（如延长预约、优先选座）
+        }
+    }
+
+    // ========== 退出登录 ==========
+    function logout() {
+        if (confirm('确定要退出登录吗？')) {
+            // 清除用户状态（保留预约记录）
+            localStorage.removeItem('userData');
+            window.location.href = 'reserve_page.html';
+        }
+    }
+</script>
+</body>
+<!-- 联系管理员悬浮二维码（个人中心页面） -->
+<div class="contact-admin" style="position: fixed; right: 30px; bottom: 30px; z-index: 999;">
+    <button class="contact-btn" style="padding: 10px 15px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">联系管理员</button>
+    <div class="qrcode-box" style="display: none; position: absolute; bottom: 40px; right: 0; padding: 10px; background-color: white; border: 1px solid #eee; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <img src="../static/images/weixin.jpg" alt="管理员微信二维码" style="width: 120px; height: 120px;">
+        <p style="font-size: 12px; text-align: center; margin-top: 5px;">扫码联系管理员</p>
+    </div>
+</div>
+<script>
+    // 悬浮显示二维码
+    document.querySelector('.contact-admin').addEventListener('mouseover', function() {
+        this.querySelector('.qrcode-box').style.display = 'block';
+    });
+    document.querySelector('.contact-admin').addEventListener('mouseout', function() {
+        this.querySelector('.qrcode-box').style.display = 'none';
+    });
+</script>
+</html>

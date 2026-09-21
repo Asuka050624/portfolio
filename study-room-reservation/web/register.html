@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<!--
+  文件名称：register.html
+  文件路径：web/register.html
+  文件用途：轻大预约系统注册页面
+  设计风格：和登录页统一（浅绿背景、左上角校徽、标题居中、右侧悬浮栏）
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>注册 - 轻大预约</title>
+    <!-- 引入样式文件（复用登录页/首页的样式） -->
+    <link rel="stylesheet" href="../static/css/style.css">
+    <!-- 新增：引入jQuery用于发送AJAX请求 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<body>
+<!-- 顶部导航栏：和首页/登录页完全一致 -->
+<nav class="nav-bar">
+    <div class="logo">
+        <img src="../static/images/school_logo.jpg" alt="轻大校徽" width="40" height="40">
+        <span>轻大预约</span>
+    </div>
+    <div class="nav-menu">
+        <a href="index.html">首页</a>
+        <div class="dropdown">
+            <a href="#">解决方案</a>
+            <div class="dropdown-content">
+                <a href="#">自习室预约系统</a>
+            </div>
+        </div>
+    </div>
+    <div class="nav-right">
+        <a href="login.html">登录</a>
+        <!-- 注册页激活态：深绿色按钮 -->
+        <a href="register.html" class="trial-btn active">免费试用</a>
+    </div>
+</nav>
+
+<!-- 注册表单区域 -->
+<section class="register-container">
+    <div class="register-card">
+        <!-- 注册框左上角校徽（和登录页一致） -->
+        <div class="register-card-logo">
+            <img src="../static/images/school_logo.jpg" alt="轻大校徽">
+        </div>
+
+        <!-- 注册标题：居中显示 -->
+        <div class="register-card-header">
+            <h2>注册轻大预约</h2>
+            <p class="agreement">注册即代表你已阅读并同意<a href="javascript:void(0)" class="agreement-link">《用户协议》</a></p>
+        </div>
+
+        <!-- 注册表单：为输入框添加ID，方便JS获取值 -->
+        <form class="register-form">
+            <!-- 手机号输入行（国家码+手机号） -->
+            <div class="form-row">
+                <select class="country-code" id="reg-country">
+                    <option value="+86" selected>+86</option>
+                </select>
+                <input type="tel" class="register-input" id="reg-phone" placeholder="请输入11位手机号" required>
+            </div>
+
+            <!-- 新增：姓名输入框（匹配后端name参数，样式与其他输入框一致） -->
+            <input type="text" class="register-input" id="reg-name" placeholder="请输入你的真实姓名" required>
+
+            <!-- 验证码行（输入框+获取验证码按钮） -->
+            <div class="form-row">
+                <input type="text" class="register-input" id="reg-code" placeholder="请输入验证码" required>
+                <button type="button" class="get-code-btn" id="get-code-btn">获取验证码</button>
+            </div>
+
+            <!-- 邮箱输入 -->
+            <input type="email" class="register-input" id="reg-email" placeholder="请输入你的邮箱" required>
+
+            <!-- 密码输入 -->
+            <input type="password" class="register-input" id="reg-pwd" placeholder="请设置6-16位密码（字母+数字）" required>
+
+            <!-- 确认密码 -->
+            <input type="password" class="register-input" id="reg-repwd" placeholder="请再次输入密码" required>
+
+            <!-- 注册按钮：绑定自定义点击事件 -->
+            <button type="button" class="register-btn" id="register-btn">立即注册</button>
+
+            <!-- 已有账号链接 -->
+            <p class="login-tip">已有轻大预约账号？<a href="login.html">立即登录</a></p>
+        </form>
+    </div>
+</section>
+
+<!-- 右侧悬浮“联系我们”：和首页/登录页一致 -->
+<div class="side-contact">
+    <div class="contact-btn">
+        <span>联系<br>我们</span>
+        <div class="contact-qrcode">
+            <img src="../static/images/weixin.jpg" alt="联系我们二维码" width="120" height="120">
+            <p>微信扫码联系</p>
+        </div>
+    </div>
+</div>
+
+<!-- 用户协议弹窗（复用登录页的弹窗） -->
+<div class="modal" id="agreementModal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h3>轻大预约系统用户协议</h3>
+        <div class="modal-text">
+            <p>1. 本系统仅面向轻大在校师生开放，用户需遵守学校各项规章制度；</p>
+            <p>2. 请文明使用系统，不得利用系统进行违规、违法操作；</p>
+            <p>3. 妥善保管个人账号密码，不得转借、出租账号，因账号泄露导致的问题由用户自行承担；</p>
+            <p>4. 合理预约自习室资源，不得恶意占用、抢订资源，违者将暂停系统使用权限；</p>
+            <p>5. 本协议最终解释权归轻大预约系统管理团队所有。</p>
+        </div>
+    </div>
+</div>
+
+<!-- 引入交互脚本（和登录页共用） -->
+<script src="../static/js/script.js"></script>
+
+<!-- 新增：注册接口交互逻辑（不影响原有脚本） -->
+<script>
+    $(function() {
+        // 1. 用户协议弹窗逻辑
+        $('.agreement-link').click(function() {
+            $('#agreementModal').show();
+        });
+        $('.close-btn').click(function() {
+            $('#agreementModal').hide();
+        });
+        $(window).click(function(e) {
+            if (e.target === $('#agreementModal')[0]) {
+                $('#agreementModal').hide();
+            }
+        });
+
+        // 2. 模拟验证码获取（前端演示，后续可对接后端短信接口）
+        $('#get-code-btn').click(function() {
+            const phone = $('#reg-phone').val().trim();
+            if (!/^1[3-9]\d{9}$/.test(phone)) {
+                alert('请输入有效的11位手机号！');
+                return;
+            }
+            // 验证码倒计时
+            let count = 60;
+            $(this).attr('disabled', true).text(`重新获取(${count}s)`);
+            const timer = setInterval(() => {
+                count--;
+                $(this).text(`重新获取(${count}s)`);
+                if (count === 0) {
+                    clearInterval(timer);
+                    $(this).attr('disabled', false).text('获取验证码');
+                }
+            }, 1000);
+            alert('验证码已发送：123456（模拟）');
+        });
+
+        // 3. 注册按钮点击事件：调用后端注册接口
+        $('#register-btn').click(function() {
+            // 获取输入值
+            const phone = $('#reg-phone').val().trim(); // 手机号作为后端account
+            const name = $('#reg-name').val().trim();   // 姓名
+            const pwd = $('#reg-pwd').val().trim();     // 密码
+            const repwd = $('#reg-repwd').val().trim(); // 确认密码
+            const code = $('#reg-code').val().trim();   // 验证码
+
+            // 前端校验
+            if (!/^1[3-9]\d{9}$/.test(phone)) {
+                alert('请输入有效的11位手机号！');
+                return;
+            }
+            if (!name) {
+                alert('请输入你的真实姓名！');
+                return;
+            }
+            if (code !== '123456') { // 模拟验证码校验
+                alert('验证码错误，正确验证码为123456！');
+                return;
+            }
+            if (pwd.length < 6 || pwd.length > 16 || !/^[a-zA-Z0-9]+$/.test(pwd)) {
+                alert('请设置6-16位密码（仅字母+数字）！');
+                return;
+            }
+            if (pwd !== repwd) {
+                alert('两次输入的密码不一致！');
+                return;
+            }
+
+            // 发送AJAX请求到后端
+            $.ajax({
+                url: `http://localhost:8080/api/register?account=${encodeURIComponent(phone)}&pwd=${encodeURIComponent(pwd)}&name=${encodeURIComponent(name)}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    alert(res.msg);
+                    if (res.code === 0) {
+                        window.location.href = 'login.html'; // 注册成功跳登录
+                    }
+                },
+                error: function() {
+                    alert('注册失败！请先启动后端服务');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

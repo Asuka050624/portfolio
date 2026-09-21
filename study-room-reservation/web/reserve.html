@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<!--
+  文件名称：reserve.html
+  文件路径：web/reserve.html
+  文件用途：轻大预约系统-自习室预约页面
+  设计风格：和登录/注册页统一（顶部导航、右侧悬浮栏、浅绿背景）
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>自习室预约 - 轻大预约</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <style>
+        /* 预约页面专属样式（复用原有样式，新增少量） */
+        .reserve-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+        }
+        .room-list {
+            flex: 2;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .my-reserve {
+            flex: 1;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .room-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .room-card:hover {
+            background-color: #f5f5f5;
+        }
+        .reserve-form {
+            margin-top: 20px;
+        }
+        .reserve-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .reserve-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .cancel-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<!-- 顶部导航栏（和登录/注册页一致） -->
+<nav class="nav-bar">
+    <div class="logo">
+        <img src="../static/images/school_logo.jpg" alt="轻大校徽" width="40" height="40">
+        <span>轻大预约</span>
+    </div>
+    <div class="nav-menu">
+        <a href="index.html">首页</a>
+        <div class="dropdown">
+            <a href="#" class="active">自习室预约</a>
+        </div>
+    </div>
+    <div class="nav-right">
+        <a href="login.html">登录</a>
+        <a href="register.html" class="trial-btn">免费试用</a>
+    </div>
+</nav>
+
+<!-- 预约主体区域 -->
+<section class="reserve-container">
+    <!-- 左侧：自习室列表 + 预约表单 -->
+    <div class="room-list">
+        <h3>自习室列表</h3>
+        <div id="room-list-content"></div>
+
+        <div class="reserve-form">
+            <h4>预约自习室</h4>
+            <input type="hidden" id="selected-room-id" value="">
+            <input type="text" class="reserve-input" id="user-account" placeholder="请输入你的注册手机号">
+            <input type="date" class="reserve-input" id="reserve-date">
+            <input type="time" class="reserve-input" id="reserve-time" step="3600"> <!-- 按小时选 -->
+            <button class="reserve-btn" id="reserve-btn">立即预约</button>
+        </div>
+    </div>
+
+    <!-- 右侧：我的预约记录 -->
+    <div class="my-reserve">
+        <h3>我的预约</h3>
+        <input type="text" class="reserve-input" id="my-account" placeholder="请输入你的注册手机号">
+        <button class="reserve-btn" id="get-reserves-btn">查询我的预约</button>
+        <div id="my-reserves-content" style="margin-top: 20px;"></div>
+    </div>
+</section>
+
+<!-- 右侧悬浮“联系我们”（和其他页一致） -->
+<div class="side-contact">
+    <div class="contact-btn">
+        <span>联系<br>我们</span>
+        <div class="contact-qrcode">
+            <img src="../static/images/weixin.jpg" alt="联系我们二维码" width="120" height="120">
+            <p>微信扫码联系</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function() {
+        // 1. 加载自习室列表
+        $.get("http://localhost:8080/api/rooms", function(res) {
+            let html = "";
+            if (res.length > 0) {
+                res.forEach(room => {
+                    html += `<div class="room-card" data-id="${room.id}">
+                            <h4>${room.name}</h4>
+                            <p>容纳人数：${room.capacity}人</p>
+                         </div>`;
+                });
+            } else {
+                html = "<p>暂无可用自习室</p>";
+            }
+            $("#room-list-content").html(html);
+
+            // 选择自习室
+            $(".room-card").click(function() {
+                $(".room-card").css("border-color", "#e0e0e0");
+                $(this).css("border-color", "#007bff");
+                $("#selected-room-id").val($(this).data("id"));
+            });
+        });
+
+        // 2. 预约自习室
+        $("#reserve-btn").click(function() {
+            const account = $("#user-account").val().trim();
+            const room_id = $("#selected-room-id").val();
+            const date = $("#reserve-date").val();
+            const time = $("#reserve-time").val();
+
+            if (!account || !room_id || !date || !time) {
+                alert("请完善预约信息并选择自习室！");
+                return;
+            }
+
+            $.get(`http://localhost:8080/api/reserve?account=${encodeURIComponent(account)}&room_id=${room_id}&date=${date}&time=${time}`, function(res) {
+                alert(res.msg);
+                if (res.code === 0) {
+                    location.reload(); // 刷新页面
+                }
+            });
+        });
+
+        // 3. 查询我的预约
+        $("#get-reserves-btn").click(function() {
+            const account = $("#my-account").val().trim();
+            if (!account) {
+                alert("请输入你的注册手机号！");
+                return;
+            }
+
+            $.get(`http://localhost:8080/api/my-reserves?account=${encodeURIComponent(account)}`, function(res) {
+                let html = "";
+                if (res.length > 0) {
+                    res.forEach(item => {
+                        const statusText = item.status == 0 ? "待使用" : (item.status == 1 ? "已使用" : "已取消");
+                        html += `<div style="margin-bottom: 10px; padding: 10px; border: 1px solid #e0e0e0; border-radius: 4px;">
+                                <p>自习室：${item.room_name}</p>
+                                <p>时间：${item.date} ${item.time}</p>
+                                <p>状态：${statusText}</p>
+                                ${item.status == 0 ? `<button class="cancel-btn" data-id="${item.id}" data-account="${account}">取消预约</button>` : ""}
+                             </div>`;
+                    });
+                } else {
+                    html = "<p>暂无预约记录</p>";
+                }
+                $("#my-reserves-content").html(html);
+
+                // 绑定取消预约事件
+                $(".cancel-btn").click(function() {
+                    const reserve_id = $(this).data("id");
+                    const account = $(this).data("account");
+                    if (confirm("确定取消该预约吗？")) {
+                        $.get(`http://localhost:8080/api/cancel-reserve?account=${encodeURIComponent(account)}&reserve_id=${reserve_id}`, function(res) {
+                            alert(res.msg);
+                            if (res.code === 0) {
+                                location.reload();
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>

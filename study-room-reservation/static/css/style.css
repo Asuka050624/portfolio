@@ -1,0 +1,662 @@
+/*
+  文件名称：style.css
+  文件路径：static/css/style.css
+  文件用途：控制轻大预约系统前端页面的样式（外观、布局）
+  核心控制：
+    1. 导航栏的固定顶部、颜色、阴影
+    2. 下拉菜单和二维码的hover显示效果
+    3. 页面基础布局的间距、字体
+*/
+body {
+    background-color: #f8fcf9; /* 这个颜色是极浅的绿色，肉眼可见但不刺眼 */
+}
+/* 全局样式重置：消除浏览器默认的边距和填充 */
+* {
+    margin: 0;
+    padding: 0;
+    /* 盒模型：宽度包含内边距和边框，方便布局 */
+    box-sizing: border-box;
+    /* 字体：统一使用微软雅黑，提升页面美观度 */
+    font-family: "Microsoft YaHei", sans-serif;
+}
+
+/* 导航栏样式：固定在顶部，占满整个宽度 */
+.nav-bar {
+    /* 固定定位：始终在页面顶部 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* 导航栏高度 */
+    height: 60px;
+    /* 背景色：白色 */
+    background-color: #ffffff;
+    /* 阴影：底部轻微阴影，提升立体感 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* 弹性布局：让子元素水平排列并居中 */
+    display: flex;
+    align-items: center;
+    /* 左右间距：分开内容 */
+    justify-content: space-between;
+    /* 内边距：左右留空 */
+    padding: 0 20px;
+    /* 层级：确保导航栏在最上层，不被其他内容遮挡 */
+    z-index: 999;
+}
+
+/* 左侧logo区域：校徽+网站名称 */
+.logo {
+    /* 弹性布局：校徽和文字并排 */
+    display: flex;
+    align-items: center;
+    /* 校徽和文字的间距 */
+    gap: 10px;
+}
+/* 网站名称文字样式 */
+.logo span {
+    font-size: 20px;
+    font-weight: bold;
+    /* 主色调：绿色（模仿模板，可后续修改） */
+    color: #00a870;
+}
+
+/* 中间导航菜单区域 */
+.nav-menu {
+    /* 弹性布局：菜单选项并排 */
+    display: flex;
+    /* 选项之间的间距 */
+    gap: 30px;
+}
+/* 导航菜单链接样式 */
+.nav-menu a {
+    /* 去掉下划线 */
+    text-decoration: none;
+    /* 文字颜色：深灰色 */
+    color: #333333;
+    font-size: 16px;
+}
+
+/* 下拉菜单容器：相对定位，让子元素绝对定位 */
+.dropdown {
+    position: relative;
+}
+/* 下拉子栏目：默认隐藏，hover时显示 */
+.dropdown-content {
+    /* 绝对定位：相对于父元素 */
+    position: absolute;
+    top: 20px;
+    left: 0;
+    /* 背景色：白色 */
+    background-color: #ffffff;
+    /* 阴影：轻微阴影 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* 最小宽度：保证子栏目美观 */
+    min-width: 150px;
+    /* 内边距：上下留空 */
+    padding: 10px 0;
+    /* 默认隐藏 */
+    display: none;
+}
+/* 下拉子栏目链接样式 */
+.dropdown-content a {
+    /* 块级元素：占满整行，方便点击 */
+    display: block;
+    /* 内边距：左右上下留空 */
+    padding: 8px 16px;
+}
+/* 鼠标悬停在“解决方案”上时，显示下拉子栏目 */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* 右侧登录/免费试用区域 */
+.nav-right {
+    display: flex;          /* 让“登录”和“免费试用”横向排列 */
+    gap: 20px;             /* 两个元素之间的间距20像素 */
+    align-items: center;   /* 新增：让元素在垂直方向上居中对齐（解决错位核心代码） */
+}
+/* 右上角免费试用按钮样式 */
+.trial-btn {
+    background-color: #00a870;
+    color: #fff !important; /* 强制白色文字，覆盖默认链接颜色 */
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-decoration: none; /* 去掉下划线 */
+}
+/* 鼠标悬停时按钮变色 */
+.trial-btn:hover {
+    background-color: #008f5d;
+}
+/* 右侧链接样式 */
+.nav-right a {
+    text-decoration: none;
+    color: #333333;
+    font-size: 16px;
+}
+/* “免费试用”文字颜色：主色调绿色 */
+.nav-right .qrcode-box a {
+    color: #00a870;
+    font-weight: bold;
+}
+/* 页面主体内容：避免被导航栏遮挡 */
+.main-content {
+    /* 上边距：等于导航栏高度，防止内容被遮挡 */
+    margin-top: 80px;
+    /* 内边距：左右留空 */
+    padding: 0 20px;
+    /* 文字居中 */
+    text-align: center;
+}
+/* 主体标题样式 */
+.main-content h1 {
+    font-size: 32px;
+    color: #333333;
+    margin-bottom: 20px;
+}
+/* 主体描述文字样式 */
+.main-content p {
+    font-size: 18px;
+    color: #666666;
+}
+/* -------------------------- 右侧悬浮联系我们栏样式 -------------------------- */
+/* 整个悬浮栏的容器：固定在屏幕右侧中间 */
+.side-contact {
+    position: fixed;          /* 固定定位，不随页面滚动而移动 */
+    top: 50%;                 /* 距离屏幕顶部50% */
+    right: 20px;              /* 距离屏幕右侧20像素 */
+    transform: translateY(-50%); /* 向上偏移50%，让悬浮栏垂直居中 */
+    z-index: 998;             /* 层级低于导航栏（999），不遮挡导航 */
+}
+
+/* 联系我们按钮：深绿色小方块 + 两行横排文字 */
+.contact-btn {
+    position: relative;
+    background-color: #008f5d; /* 深绿色底色（深色） */
+    color: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    /* 方块尺寸：宽高一致 */
+    width: 60px;
+    height: 60px;
+    /* 文字垂直分行+居中 */
+    display: flex;
+    flex-direction: column; /* 文字垂直排列（两行） */
+    justify-content: center; /* 文字垂直居中 */
+    align-items: center; /* 文字水平居中（每行都是横排） */
+    text-align: center;
+}
+
+/* 二维码容器：默认隐藏，hover时显示 */
+.contact-qrcode {
+    position: absolute;
+    right: 70px; /* 距离小方块右侧70px，避免重叠 */
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+    display: none;
+}
+
+/* 二维码下方的提示文字样式 */
+.contact-qrcode p {
+    font-size: 12px;          /* 小字体 */
+    color: #666;              /* 灰色文字 */
+    margin-top: 5px;          /* 和二维码图片的间距 */
+}
+
+/* 鼠标悬停在“联系我们”按钮上，显示二维码 */
+.contact-btn:hover .contact-qrcode {
+    display: block;           /* 显示二维码容器 */
+}
+/* -------------------------- 登录页面专属样式 -------------------------- */
+/* 登录容器：让登录卡片水平垂直居中 */
+.login-container {
+    width: 100%;
+    padding: 80px 20px; /* 顶部间距（避开导航栏）+ 左右内边距 */
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    min-height: calc(100vh - 60px); /* 高度=屏幕高度-导航栏高度 */
+    box-sizing: border-box;
+}
+
+/* 登录卡片：设置相对定位，作为校徽绝对定位的参考 */
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px 30px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+    position: relative; /* 关键：让校徽基于此定位 */
+}
+
+/* 校徽：绝对定位到登录框左上角 */
+.login-card-logo {
+    position: absolute;
+    top: 15px;   /* 距离顶部15px */
+    left: 15px;  /* 距离左侧15px */
+}
+.login-card-logo img {
+    width: 40px; /* 校徽尺寸，可微调 */
+    height: 40px;
+}
+
+/* 标题区域：单独居中 */
+.login-card-header {
+    margin-bottom: 25px; /* 标题和下方内容的间距 */
+}
+.login-card-header h2 {
+    font-size: 24px;
+    color: #333333;
+    margin: 0; /* 清除默认margin */
+}
+
+/* 登录标题：“登录轻大预约” */
+.login-card h2 {
+    font-size: 24px;
+    color: #333333;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+/* 用户协议提示文字 */
+.login-card .agreement {
+    font-size: 12px;
+    color: #999999;
+    margin-bottom: 25px;
+}
+
+/* 登录输入框样式 */
+.login-input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border: 1px solid #e5e5e5; /* 浅灰色边框，模仿模板 */
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box; /* 宽度包含内边距 */
+}
+/* 输入框聚焦时的样式（高亮边框） */
+.login-input:focus {
+    outline: none;
+    border-color: #00a870; /* 主色调绿色，提升交互感 */
+}
+
+/* 立即登录按钮 */
+.login-btn {
+    width: 100%;
+    padding: 12px 0;
+    background-color: #00a870; /* 主色调绿色，和模板一致 */
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+/* 按钮悬停时变色 */
+.login-btn:hover {
+    background-color: #008f5d; /* 深绿色，hover反馈 */
+}
+
+/* 注册提示文字 */
+.login-card .register-tip {
+    font-size: 14px;
+    color: #666666;
+    margin-bottom: 10px;
+}
+/* 注册链接样式 */
+.login-card .register-tip a {
+    color: #00a870;
+    text-decoration: none;
+}
+/* 注册链接hover时加下划线 */
+.login-card .register-tip a:hover {
+    text-decoration: underline;
+}
+
+/* 登录页导航栏的“登录”激活态样式 */
+.nav-right .active {
+    color: #00a870 !important;
+    font-weight: bold;
+}
+/* 登录卡片头部：校徽+标题 → 左上方同行显示 */
+.login-card-header {
+    display: flex;
+    align-items: center;    /* 垂直居中（校徽和文字对齐） */
+    justify-content: center;/* 水平居中（整个头部区域居中） */
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+/* 登录页校徽的样式：尺寸适配左上方 */
+.login-logo {
+    width: 40px;            /* 校徽宽度（根据你的校徽大小调整，比如30/50） */
+    height: 40px;           /* 校徽高度，和宽度一致避免变形 */
+    border-radius: 50%;     /* 可选：让校徽变成圆形，更美观 */
+}
+/* 校徽样式（尺寸适中） */
+.login-logo {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 10px; /* 校徽和标题的间距 */
+}
+
+/* 用户协议链接样式 */
+.agreement-link {
+    color: #00a870; /* 主色调绿色，区分普通文字 */
+    text-decoration: none;
+    cursor: pointer;
+}
+.agreement-link:hover {
+    text-decoration: underline; /*  hover时加下划线 */
+}
+
+/* 弹窗（模态框）样式 */
+.modal {
+    display: none; /* 默认隐藏 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+    z-index: 1000; /* 层级最高，不被遮挡 */
+    justify-content: center;
+    align-items: center;
+}
+/* 弹窗内容区域 */
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px; /* 限制弹窗宽度 */
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+}
+/* 弹窗关闭按钮 */
+.close-btn {
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+}
+.close-btn:hover {
+    color: #000;
+}
+/* 弹窗标题 */
+.modal h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+}
+/* 弹窗协议内容 */
+.modal-text p {
+    margin-bottom: 10px;
+    line-height: 1.6;
+    color: #666;
+}
+/* -------------------------- 注册页面专属样式 -------------------------- */
+/* 注册容器：居中显示，适配浅绿背景 */
+.register-container {
+    width: 100%;
+    padding: 80px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 60px); /* 高度=屏幕高度-导航栏高度 */
+    box-sizing: border-box;
+}
+
+/* 注册卡片：白色背景+阴影，相对定位（校徽绝对定位的参考） */
+.register-card {
+    width: 100%;
+    max-width: 450px;
+    padding: 40px 30px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+    position: relative; /* 关键：校徽基于此定位 */
+}
+
+/* 注册框左上角校徽 */
+.register-card-logo {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+}
+.register-card-logo img {
+    width: 40px;
+    height: 40px;
+}
+
+/* 注册标题区域：居中 */
+.register-card-header {
+    margin-bottom: 25px;
+}
+.register-card-header h2 {
+    font-size: 24px;
+    color: #333333;
+    margin: 0 0 8px 0;
+}
+
+/* 表单行（手机号/验证码）：横向排列 */
+.form-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+/* 国家码选择框 */
+.country-code {
+    padding: 12px 10px;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    font-size: 14px;
+    flex-shrink: 0; /* 防止被挤压 */
+    width: 70px;
+}
+
+/* 获取验证码按钮 */
+.get-code-btn {
+    padding: 0 15px;
+    background-color: #f8f8f8;
+    color: #666666;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    flex-shrink: 0; /* 防止被挤压 */
+    width: 120px;
+}
+.get-code-btn:hover {
+    background-color: #eeeeee;
+}
+
+/* 注册输入框：和登录框样式统一 */
+.register-input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+.register-input:focus {
+    outline: none;
+    border-color: #00a870; /* 主色调绿色，聚焦高亮 */
+}
+
+/* 注册按钮：和登录按钮样式统一 */
+.register-btn {
+    width: 100%;
+    padding: 12px 0;
+    background-color: #00a870;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+.register-btn:hover {
+    background-color: #008f5d; /* 深绿色hover反馈 */
+}
+
+/* 已有账号提示 */
+.login-tip {
+    font-size: 14px;
+    color: #666666;
+}
+.login-tip a {
+    color: #00a870;
+    text-decoration: none;
+}
+.login-tip a:hover {
+    text-decoration: underline;
+}
+
+/* 导航栏“免费试用”激活态：深绿色背景 */
+.nav-right .trial-btn.active {
+    background-color: #008f5d;
+}
+/* -------------------------- 轮播Banner样式（左对齐+上下居中+和下方栏目对齐） -------------------------- */
+.carousel-section {
+    background-color: #f0f8f5; /* 浅绿背景 */
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    min-height: 300px; /* 固定轮播区域高度 */
+    display: flex;
+    align-items: center; /* 整个轮播区垂直居中 */
+}
+/* 轮播容器：和下方优势栏目宽度一致，实现水平对齐 */
+.carousel-container {
+    max-width: 1200px; /* 和下方advantage-section的max-width一致 */
+    width: 100%;
+    margin: 0 auto; /* 居中容器，和下方栏目对齐 */
+    position: relative;
+    height: 260px; /* 轮播容器高度 */
+}
+/* 轮播项：上下居中+左对齐 */
+.carousel-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center; /* 上下居中 */
+    justify-content: flex-start; /* 左对齐（核心） */
+}
+.carousel-item.active {
+    display: flex;
+}
+/* 轮播文字：左对齐，和下方栏目水平对齐 */
+.carousel-text {
+    width: 100%;
+    padding: 0 20px;
+    text-align: left;
+    /* 核心：添加左边距，让内容移到红色圈位置（数值可根据需要微调） */
+    padding-left: 100px;
+}
+.carousel-text h2 {
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+.carousel-text p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 25px;
+}
+.carousel-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #00a870;
+    color: #fff;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    margin-left: 10px; /* 右移约1厘米 */
+}
+.carousel-btn:hover {
+    background-color: #008f5d;
+}
+/* 轮播小圆点指示器：位置不变 */
+.carousel-indicators {
+    position: absolute;
+    bottom: 20px;
+    left: 50%; /* 水平居中 */
+    transform: translateX(-50%); /* 居中修正 */
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ccc;
+    cursor: pointer;
+}
+.indicator.active {
+    background-color: #00a870;
+}
+
+/* -------------------------- 复刻截图的6个优势栏目样式 -------------------------- */
+.advantage-section {
+    padding: 60px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.advantage-list {
+    display: flex;
+    flex-wrap: nowrap; /* 关键：强制不换行 */
+    justify-content: space-between;
+    gap: 15px; /* 减小间距，适配一行 */
+}
+.advantage-item {
+    width: calc(16.666% - 12px); /* 调整宽度，适配新间距 */
+    text-align: center;
+}
+/* 截图同款六边形图标 */
+.hexagon-icon {
+    width: 60px;
+    height: 69px; /* 六边形宽高比例：宽60 → 高≈69 */
+    background-color: #00a870; /* 截图同款绿色六边形 */
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.hexagon-icon img {
+    width: 30px;
+    height: 30px;
+}
+.advantage-item h3 {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.advantage-item p {
+    font-size: 12px;
+    color: #666;
+}

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<!--
+  文件名称：login.html
+  文件路径：web/login.html
+  文件用途：轻大预约系统的登录页面
+  核心布局：
+    1. 和首页一致的顶部导航栏（保证风格统一）
+    2. 居中的登录表单（电话/学号+密码输入、登录按钮、注册链接）
+    3. 右侧悬浮的“联系我们”二维码（和首页一致）
+  依赖资源：
+    - ../static/css/style.css：样式文件（复用首页的样式+新增登录页样式）
+-->
+<html lang="zh-CN">
+<head>
+    <!-- 字符编码：支持中文 -->
+    <meta charset="UTF-8">
+    <!-- 页面标题：登录 - 轻大预约 -->
+    <title>登录 - 轻大预约</title>
+    <!-- 引入原有样式文件（恢复你的绿色主题） -->
+    <link rel="stylesheet" href="../static/css/style.css">
+    <!-- 引入jQuery（保留原有） -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<body>
+<!-- 用户协议弹窗（默认隐藏，恢复原有结构） -->
+<div class="modal" id="agreementModal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h3>轻大预约系统用户协议</h3>
+        <div class="modal-text">
+            <p>1. 本系统仅面向轻大在校师生开放，用户需遵守学校各项规章制度；</p>
+            <p>2. 请文明使用系统，不得利用系统进行违规、违法操作；</p>
+            <p>3. 妥善保管个人账号密码，不得转借、出租账号，因账号泄露导致的问题由用户自行承担；</p>
+            <p>4. 合理预约自习室资源，不得恶意占用、抢订资源，违者将暂停系统使用权限；</p>
+            <p>5. 本协议最终解释权归轻大预约系统管理团队所有。</p>
+        </div>
+    </div>
+</div>
+
+<!-- 顶部导航栏：恢复原有绿色主题+结构 -->
+<nav class="nav-bar">
+    <div class="logo">
+        <img src="../static/images/school_logo.jpg" alt="轻大预约校徽" width="40" height="40">
+        <span>轻大预约</span>
+    </div>
+    <div class="nav-menu">
+        <a href="index.html">首页</a>
+        <div class="dropdown">
+            <a href="#">解决方案</a>
+            <div class="dropdown-content">
+                <a href="#">自习室预约系统</a>
+            </div>
+        </div>
+    </div>
+    <div class="nav-right">
+        <a href="login.html" class="active">登录</a>
+        <!-- 恢复“免费试用”按钮为绿色（原样式） -->
+        <a href="register.html" class="trial-btn">免费试用</a>
+    </div>
+</nav>
+
+<!-- 登录表单区域：恢复2个输入框（电话/学号+密码） -->
+<section class="login-container">
+    <div class="login-card">
+        <div class="login-card-logo">
+            <img src="../static/images/school_logo.jpg" alt="轻大校徽">
+        </div>
+        <div class="login-card-header">
+            <h2>登录轻大预约</h2>
+        </div>
+        <p class="agreement">登录即代表你已阅读并同意<a href="javascript:void(0)" class="agreement-link">《用户协议》</a></p>
+        <!-- 输入框1：电话/学号二选一 -->
+        <input type="text" class="login-input" id="login-account" placeholder="请输入电话\学号">
+        <!-- 输入框2：密码 -->
+        <input type="password" class="login-input" id="login-pwd" placeholder="请输入你的密码">
+        <!-- 恢复登录按钮为绿色（原样式） -->
+        <button class="login-btn" id="login-btn">立即登录</button>
+        <p class="register-tip">没有轻大预约账号？<a href="register.html">立即注册</a></p>
+    </div>
+</section>
+
+<!-- 右侧悬浮“联系我们”：恢复原有绿色样式 -->
+<div class="side-contact">
+    <div class="contact-btn">
+        <span>联系<br>我们</span>
+        <div class="contact-qrcode">
+            <img src="../static/images/weixin.jpg" alt="联系我们二维码" width="120" height="120">
+            <p>微信扫码联系</p>
+        </div>
+    </div>
+</div>
+
+<script src="../static/js/script.js"></script>
+
+<!-- 登录逻辑：支持“电话/学号+密码”登录，恢复原有风格 -->
+<script>
+    $(function() {
+        // 1. 用户协议弹窗逻辑（保留原有）
+        $('.agreement-link').click(function() {
+            $('#agreementModal').show();
+        });
+        $('.close-btn').click(function() {
+            $('#agreementModal').hide();
+        });
+        $(window).click(function(e) {
+            if (e.target === $('#agreementModal')[0]) {
+                $('#agreementModal').hide();
+            }
+        });
+
+        // 2. 初始化指定测试用户（电话15993669191、学号542312320104、密码dxf159753）
+        if (!localStorage.getItem('userList')) {
+            const defaultUserList = [
+                {
+                    account: '15993669191', // 电话
+                    studentId: '542312320104', // 学号
+                    pwd: 'dxf159753', // 密码
+                    nickname: '轻大学子'
+                }
+            ];
+            localStorage.setItem('userList', JSON.stringify(defaultUserList));
+        }
+
+        // 3. 联系我们二维码悬浮逻辑（保留原有）
+        $('.contact-btn').hover(function() {
+            $('.contact-qrcode').show();
+        }, function() {
+            $('.contact-qrcode').hide();
+        });
+
+        // 4. 登录按钮逻辑：支持电话/学号二选一+密码登录
+        $('#login-btn').click(function() {
+            const inputVal = $('#login-account').val().trim(); // 电话/学号
+            const inputPwd = $('#login-pwd').val().trim(); // 密码
+
+            // 空值校验
+            if (!inputVal) {
+                alert('请输入电话或学号！');
+                return;
+            }
+            if (!inputPwd) {
+                alert('请输入密码！');
+                return;
+            }
+
+            // 匹配用户（电话/学号任一符合即可）
+            const userList = JSON.parse(localStorage.getItem('userList'));
+            const matchUser = userList.find(user => {
+                return user.account === inputVal || user.studentId === inputVal;
+            });
+
+            // 验证逻辑
+            if (!matchUser) {
+                alert('用户不存在！');
+                return;
+            }
+            if (matchUser.pwd !== inputPwd) {
+                alert('密码错误！');
+                return;
+            }
+
+            // 登录成功
+            localStorage.setItem('isLogin', 'true');
+            localStorage.setItem('currentUser', JSON.stringify(matchUser));
+            alert(`欢迎回来，${matchUser.nickname}！登录成功`);
+            window.location.href = 'personal_center.html';
+        });
+    });
+</script>
+</body>
+</html>
